@@ -93,7 +93,7 @@ export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
                   <ol className="st-group-list">{items.map((p) => <li key={p.id}><button onClick={() => setOpen(p)}>{p.name}<Arrow /></button></li>)}</ol>
                   <span>{items.length} projects</span>
                 </header>
-                {items.map((project) => <article key={project.id} className="st-card">
+                {items.map((project) => <article key={project.id} className="st-card" data-project={project.id}>
                   <button className="st-card-preview" aria-label={`Open ${project.name}${project.reel ? " demo" : ""}`} onClick={() => setOpen(project)}>
                     <ProjectPoster project={project} className="aspect-video w-full" />
                     <span className="st-card-badge">{project.reel ? `Play demo · ${project.reelLength}` : "Read notes"}</span>

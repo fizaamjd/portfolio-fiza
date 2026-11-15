@@ -70,6 +70,25 @@ export default function ProjectPoster({
     return { dots, rot: (h >> 13) % 40, warm: ((h >> 3) & 1) === 1 };
   }, [project.id]);
 
+  /* Every reel has a still of the exact frame its thumbnail opens on
+     (public/motion/stills/<id>.webp). It shows at once, and the live reel fades
+     in over it when ready, so the card never looks empty while it loads. */
+  if (project.reel) {
+    return (
+      <div className={`relative overflow-hidden bg-bg2 ${className}`}>
+        <Image
+          src={`/motion/stills/${project.id}.webp`}
+          alt={`${project.name} demo`}
+          fill
+          sizes="(max-width: 620px) 100vw, 600px"
+          priority={priority}
+          className="object-cover"
+        />
+        <ReelLayer project={project} />
+      </div>
+    );
+  }
+
   if (showImage) {
     return (
       <div className={`relative overflow-hidden bg-bg2 ${className}`}>

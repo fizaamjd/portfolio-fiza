@@ -7,7 +7,7 @@ import type { Project } from "@/lib/data";
 /* Where a card's thumbnail opens, in reel milliseconds. Most reels begin on a
    quiet ident that reads as an empty card at thumbnail size, so the grid opens
    each one on a frame that shows the work. The full player still starts at 0. */
-const THUMB_START: Record<string, number> = {
+export const THUMB_START: Record<string, number> = {
   zerotrust: 15500,
   smartinbox: 16000,
   infinium: 15000,
@@ -151,7 +151,7 @@ export default function ProjectReel({
     <div
       ref={shell}
       className={`group/reel relative overflow-hidden ${
-        "bg-bg2"
+        thumb ? "" : "bg-bg2" /* a thumbnail is transparent until it loads, so the still under it shows */
       } ${className}`}
     >
       <div ref={stage} className={`absolute inset-x-0 top-0 ${thumb ? "bottom-0" : "bottom-14"}`}>
