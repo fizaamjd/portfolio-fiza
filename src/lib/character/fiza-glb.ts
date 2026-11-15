@@ -27,7 +27,7 @@ import { MASK_LAYER } from "@/lib/character/silhouette-outline";
  * load, the hand-built character takes its place.
  */
 // bump ?v= whenever the model files change, so browsers fetch the new ones
-const V = "v=8";
+const V = "v=9";
 const URL = `/models/fiza-preview.glb?${V}`;
 const FULL = { colour: `/models/fiza-colour.webp?${V}`, normal: `/models/fiza-normal.webp?${V}`, mr: `/models/fiza-mr.webp?${V}` };
 const HEIGHT = 5.4;

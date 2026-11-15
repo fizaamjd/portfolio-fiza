@@ -445,3 +445,8 @@
 
 /* the line under her name, a size smaller */
 .st-tag{font-size:clamp(18px,1.55vw,21px)!important;line-height:1.6!important;max-width:34ch!important}
+
+/* instant poster of the character, lined up with the 3D canvas (same height, centred), fading out once she is live */
+.st-poster{position:absolute;top:0;left:50%;height:100%;width:auto;max-width:none;transform:translateX(-50%);pointer-events:none;z-index:2;transition:opacity .45s ease}
+.st-poster.is-gone{opacity:0}
+.st-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

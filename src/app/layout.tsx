@@ -51,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         {/* start fetching the 3D character right away, in parallel with the page's JavaScript */}
-        <link rel="preload" href="/models/fiza-preview.glb?v=8" as="fetch" type="model/gltf-binary" crossOrigin="anonymous" />
+        <link rel="preload" href="/models/fiza-preview.glb?v=9" as="fetch" type="model/gltf-binary" crossOrigin="anonymous" fetchPriority="high" />
         {children}
       </body>
     </html>

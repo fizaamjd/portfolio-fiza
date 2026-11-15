@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { createFizaCharacter } from "@/lib/character/fiza-glb";
+import { markHeroReady } from "@/lib/hero-ready";
 import { createSilhouetteOutline } from "@/lib/character/silhouette-outline";
 
 /* Little Fiza on the hero stage: she breathes, sways a little and turns
@@ -17,7 +18,7 @@ export default function FizaCharacter({ greeting, paused, onReady }: { greeting:
   useEffect(() => {
     const el = host.current; if (!el) return;
     let renderer: THREE.WebGLRenderer;
-    try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" }); } catch { live.current.onReady(false); return; }
+    try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" }); } catch { markHeroReady(); live.current.onReady(false); return; }
     // supersample: render at 2x even on 1x screens so edges and texture detail stay crisp
     renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 2.5)); renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
@@ -43,7 +44,7 @@ export default function FizaCharacter({ greeting, paused, onReady }: { greeting:
     let drawStart = -1, glintClock = 0;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)");
     let disposed = false, loaded = false;
-    model.ready.then((ok) => { loaded = ok; if (!disposed) live.current.onReady(ok); });
+    model.ready.then((ok) => { loaded = ok; markHeroReady(); if (!disposed) live.current.onReady(ok); });
 
     const pointer = { x: 0, over: false };
     const move = (e: PointerEvent) => { const box = el.getBoundingClientRect(); pointer.x = THREE.MathUtils.clamp((e.clientX - box.left) / box.width * 2 - 1, -1, 1); pointer.over = true; };

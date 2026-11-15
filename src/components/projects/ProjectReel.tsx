@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { whenHeroReady } from "@/lib/hero-ready";
 import type { Project } from "@/lib/data";
 
 /* Where a card's thumbnail opens, in reel milliseconds. Most reels begin on a
@@ -51,6 +52,9 @@ export default function ProjectReel({
      scrolled to, so it waits until it is nearly in view. The player sits in a
      dossier the viewer deliberately opened, so it loads at once. */
   const [mounted, setMounted] = useState(!thumb);
+  // thumbnails wait until the hero character is up (or 4 s), so a first visit loads her first
+  const [heroUp, setHeroUp] = useState(!thumb);
+  useEffect(() => { if (!heroUp) whenHeroReady().then(() => setHeroUp(true)); }, [heroUp]);
   const [loaded, setLoaded] = useState(false);
 
   /* True only while the reel is paused because we hid it, never because the
@@ -79,16 +83,16 @@ export default function ProjectReel({
   // Prepare nearby thumbnails, but animate only previews actually in view.
   useEffect(() => {
     const el = shell.current;
-    if (!el || mounted) return;
+    if (!el || mounted || !heroUp) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setMounted(true);
       },
-      { rootMargin: "1400px 0px", threshold: 0 }, // start well before it scrolls into view
+      { rootMargin: "800px 0px", threshold: 0 }, // start a little before it scrolls into view
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [mounted]);
+  }, [mounted, heroUp]);
 
   useEffect(() => {
     const el = shell.current;

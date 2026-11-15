@@ -8,6 +8,7 @@ import ProjectPanel from "@/components/projects/ProjectPanel";
 import ProjectPoster from "@/components/projects/ProjectPoster";
 import ExperienceSection from "@/components/home/ExperienceSection";
 import IntroReel from "@/components/home/IntroReel";
+import { whenHeroReady } from "@/lib/hero-ready";
 import RecognitionSection from "@/components/home/RecognitionSection";
 import OffTheClock from "@/components/home/OffTheClock";
 
@@ -43,8 +44,9 @@ export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
       }
     };
     const start = () => { if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 6000 }); else setTimeout(run, 3000); };
-    const t = window.setTimeout(start, 3500); // after the character and its textures have had their turn
-    return () => { cancelled = true; window.clearTimeout(t); };
+    // after the character is up, so she always gets the bandwidth first
+    whenHeroReady(8000).then(() => { if (!cancelled) window.setTimeout(start, 1200); });
+    return () => { cancelled = true; };
   }, []);
   const [open, setOpen] = useState<Project | null>(null), [greeting, setGreeting] = useState(0), [ready, setReady] = useState<boolean | null>(null);
 
@@ -66,7 +68,10 @@ export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
               <span className="st-halo" aria-hidden="true"><span className="st-halo-orbit"><i /><i /></span><span className="st-halo-orbit st-halo-orbit-2"><i /></span></span>
               {ready !== false && <Character greeting={greeting} paused={false} onReady={setReady} />}
               {ready === false && <Image src={PROFILE.photo} width={600} height={800} alt="Fiza Amjad" className="identity-fallback-photo" />}
-              {ready === null && <span className="identity-loading" role="status">Meeting little Fiza…</span>}
+              {/* a still of her resting pose shows instantly, then fades as the live 3D version takes over */}
+              {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized still that must line up exactly with the canvas */}
+              {ready !== false && <img className={`st-poster${ready ? " is-gone" : ""}`} src="/models/fiza-poster.webp?v=9" alt="" aria-hidden="true" fetchPriority="high" decoding="async" />}
+              {ready === null && <span className="identity-loading st-sr" role="status">Meeting little Fiza…</span>}
             </button>
             <p className="st-stage-cap">meet mini me. tap her and wander through my projects as a little game.</p>
             <div className="st-controls"><button onClick={() => setGreeting((n) => n + 1)} disabled={ready !== true}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66" /><path d="M20 4v5h-5" /></svg>twirl</button></div>

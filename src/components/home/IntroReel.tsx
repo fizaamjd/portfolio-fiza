@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { whenHeroReady } from "@/lib/hero-ready";
 
 /**
  * The motion intro that opens the work section. It plays only while it is on
@@ -11,6 +12,8 @@ export default function IntroReel() {
   const shell = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [heroUp, setHeroUp] = useState(false);
+  useEffect(() => { whenHeroReady().then(() => setHeroUp(true)); }, []);
   const [loaded, setLoaded] = useState(false);
   const [paused, setPaused] = useState(false);
   const userPaused = useRef(false);
@@ -20,11 +23,11 @@ export default function IntroReel() {
 
   useEffect(() => {
     const el = shell.current;
-    if (!el || mounted) return;
+    if (!el || mounted || !heroUp) return;
     const io = new IntersectionObserver(([e]) => e.isIntersecting && setMounted(true), { rootMargin: "300px" });
     io.observe(el);
     return () => io.disconnect();
-  }, [mounted]);
+  }, [mounted, heroUp]);
 
   useEffect(() => {
     const el = shell.current;
