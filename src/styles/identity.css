@@ -174,3 +174,17 @@ body:has(.identity-site)::before,body:has(.identity-site)::after{display:none}
 .paper-map-tag{position:absolute;z-index:1;transform:translate(-50%,-50%);pointer-events:none;opacity:0;font-family:var(--font-figtree),system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;padding:6px 14px;border-radius:999px;background:#fbf8f1e8;box-shadow:0 6px 18px #17354b1a;white-space:nowrap}
 .paper-map-tag.tone-wine{color:#7b2233}.paper-map-tag.tone-ink{color:#17557f}.paper-map-tag.tone-butter{color:#8a6510}
 @media(max-width:700px){.paper-minimap{width:128px;top:auto;bottom:150px;right:16px;padding:7px}.paper-minimap p{display:none}}
+
+/* game on phones: minimap tucked top-right, one compact row of controls, arrows bottom-right */
+.paper-help-touch{display:none}
+@media(hover:none),(max-width:700px){.paper-help-pointer{display:none}.paper-help-touch{display:inline}}
+@media(max-width:700px){
+  .paper-minimap{width:96px;top:auto;bottom:auto;top:96px;right:12px;padding:5px;border-radius:12px}
+  .paper-game-notice{top:12px;left:12px;right:12px;max-width:none;padding:10px 14px;gap:10px}
+  .paper-game-notice p{font-size:13.5px}
+  .paper-game-controls{left:12px;bottom:12px;padding:8px;gap:6px;flex-wrap:wrap;max-width:calc(100% - 190px)}
+  .paper-game-help{display:none}
+  .paper-game-controls .paper-game-pause{min-height:38px;padding:0 10px;font-size:12px;border:1px solid #acc0cf;border-radius:8px;background:#f7f3e9}
+  .paper-game-dpad{right:12px;bottom:12px;grid-template-columns:repeat(3,48px);grid-template-rows:48px 48px}
+}
+@media(max-width:700px){.paper-map-tag{font-size:13px;padding:4px 10px}}
