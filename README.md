@@ -21,7 +21,7 @@ It's a one-page site with a small 3D version of me in the hero, fifteen projects
 | | |
 | --- | --- |
 | Framework | [Next.js 16](https://nextjs.org) (App Router), React 19, TypeScript |
-| 3D | [Three.js](https://threejs.org): GLTF character, skinned animation, custom shaders for the blink and the silhouette glow |
+| 3D | [Three.js](https://threejs.org): skinned GLTF character (meshopt + WebP, streamed in two steps), custom shaders for the blink and the silhouette glow |
 | Styling | Tailwind CSS 4 plus hand-written CSS in `src/styles` |
 | Motion reels | Self-contained HTML/CSS/JS files in `public/motion`, embedded in iframes |
 | Hosting | Vercel |
@@ -42,7 +42,7 @@ src/
 │   └── game/               # world layout and sound effects
 └── styles/                 # section styles
 public/
-├── models/                 # the rigged character (.glb) and its blink mask
+├── models/                 # the character: compressed preview .glb, full-res WebP textures, blink mask
 ├── motion/                 # one HTML motion reel per project
 ├── projects/               # project images and demo media
 ├── experience/             # photos from work

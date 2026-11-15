@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { createFizaModel } from "@/lib/character/fiza-model";
 import { createGlasses } from "@/lib/character/fiza-glasses";
@@ -7,8 +8,10 @@ import { MASK_LAYER } from "@/lib/character/silhouette-outline";
 
 /*
  * Little Fiza, rigged in Meshy (Mixamo skeleton) and exported with its walk
- * cycles: public/models/fiza-rigged.glb, textures recompressed with
- * game-builds/character/textures.mjs (8K colour).
+ * cycles. Loaded in two steps so she appears quickly: a ~3 MB preview
+ * (public/models/fiza-preview.glb: meshopt-compressed geometry, small WebP
+ * textures), then the full-resolution WebP textures (8K colour, 4K normals)
+ * stream in and replace the small ones on the same material.
  *
  * Standing, she holds her sculpted pose and moves only a little: breathing in
  * the spine, a slow head tilt, a blink every few seconds. Walking plays the
@@ -23,12 +26,14 @@ import { MASK_LAYER } from "@/lib/character/silhouette-outline";
  * dispose), so the hero and the game use it directly. If the file cannot
  * load, the hand-built character takes its place.
  */
-// bump ?v= whenever the model file changes, so browsers fetch the new one
-const URL = "/models/fiza-rigged.glb?v=7";
+// bump ?v= whenever the model files change, so browsers fetch the new ones
+const V = "v=8";
+const URL = `/models/fiza-preview.glb?${V}`;
+const FULL = { colour: `/models/fiza-colour.webp?${V}`, normal: `/models/fiza-normal.webp?${V}`, mr: `/models/fiza-mr.webp?${V}` };
 const HEIGHT = 5.4;
 const WALK_CLIP = "Walking_Woman";
 
-const BLINK_MASK = "/models/fiza-blink.png?v=7";
+const BLINK_MASK = `/models/fiza-blink.png?${V}`;
 // THREE.Color treats hex as sRGB and stores it linear, matching the shader
 const SKIN = new THREE.Color(0xe9946b);
 const LASH = new THREE.Color(0x29170f);
@@ -43,11 +48,32 @@ let cache: Promise<{ scene: THREE.Group; clips: THREE.AnimationClip[] } | null> 
 function loadOnce() {
   if (!cache) {
     cache = new GLTFLoader()
+      .setMeshoptDecoder(MeshoptDecoder)
       .loadAsync(URL)
       .then((g) => ({ scene: g.scene as THREE.Group, clips: g.animations }))
       .catch(() => null);
   }
   return cache;
+}
+
+/* Swap the preview textures for full-resolution ones, once per page (the hero
+   and the game share the loaded material). Waits until the page is idle so
+   the first paint is not competing with 12 MB of textures. */
+let upgraded: Promise<void> | null = null;
+function upgradeTextures(mat: THREE.MeshStandardMaterial, aniso: number) {
+  if (upgraded) return upgraded;
+  const idle = () => new Promise<void>((r) => ("requestIdleCallback" in window ? window.requestIdleCallback(() => r(), { timeout: 2500 }) : setTimeout(r, 1200)));
+  const load = (url: string, like: THREE.Texture | null, srgb: boolean) => new THREE.TextureLoader().loadAsync(url).then((t) => {
+    t.flipY = false; t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; t.anisotropy = aniso;
+    if (like) { t.wrapS = like.wrapS; t.wrapT = like.wrapT; t.channel = like.channel; }
+    return t;
+  });
+  upgraded = idle().then(() => Promise.all([load(FULL.colour, mat.map, true), load(FULL.normal, mat.normalMap, false), load(FULL.mr, mat.roughnessMap, false)])).then(([col, nrm, mr]) => {
+    const old = [mat.map, mat.normalMap, mat.roughnessMap, mat.metalnessMap];
+    mat.map = col; if (mat.normalMap) mat.normalMap = nrm; if (mat.roughnessMap) mat.roughnessMap = mr; if (mat.metalnessMap) mat.metalnessMap = mr;
+    for (const t of new Set(old)) t?.dispose();
+  }).catch(() => { /* keep the preview textures if the full ones cannot load */ });
+  return upgraded;
 }
 
 /** Keep the walk in place: drop the hips' travel across the floor, keep its bob. */
@@ -127,6 +153,7 @@ export function createFizaCharacter(renderer?: THREE.WebGLRenderer) {
         maskTex.generateMipmaps = false;
         maskTex.minFilter = THREE.LinearFilter;
         owned.push(maskTex);
+        void upgradeTextures(mat, aniso);
         mat.onBeforeCompile = (shader) => {
           shader.uniforms.uBlink = blink;
           shader.uniforms.uBlinkMask = { value: maskTex };
