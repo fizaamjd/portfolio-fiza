@@ -3,7 +3,7 @@
 The personal portfolio of **Fiza Amjad**, full-stack engineer in Lahore.
 It's a one-page site with a small 3D version of me in the hero, fifteen projects with motion demos, and a little game world where walking onto a project opens it.
 
-**Live:** _coming soon_ · **Contact:** fizaamjad444@gmail.com · [LinkedIn](https://www.linkedin.com/in/fiza-amjad-a74891271/) · [GitHub](https://github.com/fizaamjd)
+**Live:** [fizaamjad.vercel.app](https://fizaamjad.vercel.app) · **Contact:** fizaamjad444@gmail.com · [LinkedIn](https://www.linkedin.com/in/fiza-amjad-a74891271/) · [GitHub](https://github.com/fizaamjd)
 
 ---
 
