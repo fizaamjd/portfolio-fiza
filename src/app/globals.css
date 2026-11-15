@@ -1,0 +1,415 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-dim: var(--dim);
+  --color-faint: var(--faint);
+  --color-lime: var(--lime);
+  --color-coral: var(--coral);
+  --font-display: var(--font-figtree), system-ui, sans-serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, monospace;
+}
+
+/*
+ * CYANOTYPE FIELD LOGBOOK
+ *
+ * Ice-blue photographic paper, printed grain, maroon as the second ink.
+ *
+ * Cyanotype is the engineer's blue: a contact-printing process on paper, which
+ * is why an unexposed sheet is pale and cool and an exposed one goes deep. So
+ * the ground is paper, the ink is the blue, and maroon is what a stamp or a
+ * correction pencil adds on top - used on almost nothing, which is what makes
+ * it land when it appears.
+ *
+ * The token names are inherited and semantic; what changed is every value.
+ * `--lime` is now the maroon stamp and `--coral` the deep field blue, because
+ * those two names are wired through every component as "the accent" and "the
+ * second accent" and renaming them would touch a hundred call sites to say
+ * the same thing.
+ */
+:root {
+  /* paper */
+  --bg: #e4ecf2;
+  --bg2: #d6e2ea;
+  --card: #f1f6f9;
+  --line: #a9c0d0;
+
+  /* ink */
+  --text: #0d2637;
+  --dim: #3d6076;
+  --faint: #5f7d91;
+
+  /* the two inks that are not the ground */
+  --lime: #7b2233; /* maroon: stamps, live marks, the one hot thing */
+  --coral: #17557f; /* deep cyanotype blue: the second mark */
+
+  /* material */
+  --tape: rgba(198, 176, 132, 0.34);
+  --plate-shadow: rgba(13, 38, 55, 0.13);
+
+  /* 1 when the palette is light - flips the ASCII portrait's density ramp. */
+  --ascii-invert: 1;
+
+  color-scheme: light;
+}
+
+/*
+ * Paper.
+ *
+ * The first attempt was a single high-frequency noise layer, which is film
+ * grain or television snow, not a sheet. Paper is three things at once and
+ * needs all three: a slow cloudy mottle where the pulp settled unevenly, a
+ * fine tooth across the surface, and the faint parallel laid lines left by the
+ * mould. Each is a separate layer at a different frequency, all multiplying
+ * into the ground so the colour underneath stays true.
+ */
+
+/* the mottle: low frequency, many octaves, the cloud in the pulp */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  /* Frequency and contrast both matter here. Too low a frequency with too much
+     contrast gives cloud-sized blotches, which read as damp damage rather than
+     as pulp, and the tile starts to show. This is a fine, shallow mottle. */
+  opacity: 0.17;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='500' height='500'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.042' numOctaves='4' seed='7' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='.11' intercept='.02'/></feComponentTransfer></filter><rect width='500' height='500' filter='url(%23m)'/></svg>");
+  background-size: 500px 500px;
+}
+
+/* the tooth and the laid lines, one layer */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  opacity: 0.21;
+  mix-blend-mode: multiply;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='t'><feTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='.22' intercept='.05'/></feComponentTransfer></filter><rect width='120' height='120' filter='url(%23t)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='9'><rect width='9' height='1' y='0' fill='%230d2637' opacity='.045'/></svg>");
+  background-size:
+    120px 120px,
+    9px 9px;
+}
+
+/*
+ * A plate laid into the sheet: paper on paper. Square to the grid, always.
+ * An earlier pass rotated these a degree or two and taped the corners, which
+ * read as a craft-project costume rather than as a made object. Alignment is
+ * what makes paper look professional; the texture does the rest.
+ */
+.plate {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 1px 2px 0 -1px var(--plate-shadow);
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--card);
+}
+
+:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Type
+ * ------------------------------------------------------------------ */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-transform: lowercase;
+}
+
+/* Reserved for the one or two places that genuinely need weight. */
+.display-strong {
+  font-weight: 700;
+}
+
+/* Archivo's width axis — wide headlines read as deliberate, not stretched. */
+.wide {
+  font-variation-settings: "wdth" 100;
+}
+.narrow {
+  font-variation-settings: "wdth" 84;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.prose-body {
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ * ------------------------------------------------------------------ */
+
+/* Scroll reveal. The mask variant wipes text up from behind a clip edge. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.shown {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-mask {
+  display: block;
+  overflow: hidden;
+}
+.reveal-mask > * {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-mask.shown > * {
+  transform: none;
+}
+
+/* Image wipe — the poster uncovers itself rather than fading. */
+.wipe {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wipe.shown {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Slowly cycles a lopsided radius, so the blob treatment never sits still. */
+@keyframes photo-morph {
+  0%,
+  100% {
+    border-radius: 58% 42% 46% 54% / 44% 48% 52% 56%;
+  }
+  25% {
+    border-radius: 44% 56% 62% 38% / 56% 40% 60% 44%;
+  }
+  50% {
+    border-radius: 63% 37% 38% 62% / 40% 60% 40% 60%;
+  }
+  75% {
+    border-radius: 40% 60% 55% 45% / 60% 52% 48% 40%;
+  }
+}
+
+/* A second blob cycle, out of phase with the first, for echo outlines. */
+@keyframes photo-morph-b {
+  0%,
+  100% {
+    border-radius: 46% 54% 60% 40% / 55% 42% 58% 45%;
+  }
+  33% {
+    border-radius: 62% 38% 42% 58% / 40% 62% 38% 60%;
+  }
+  66% {
+    border-radius: 38% 62% 56% 44% / 62% 46% 54% 38%;
+  }
+}
+
+/*
+ * The shape turns while the photo inside counter-turns, so the silhouette
+ * moves but the face stays upright. The image is scaled up to guarantee it
+ * still covers the box at every angle.
+ */
+@keyframes photo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes photo-spin-rev {
+  to {
+    transform: rotate(-360deg) scale(1.45);
+  }
+}
+
+@keyframes photo-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+/*
+ * Plotted ink. Every decorative mark on the page is flat - a stroke or a
+ * filled dot at a size - so these move the geometry and never fade it. The
+ * halftone breathes by scale, which changes dot size without touching colour.
+ */
+@keyframes plot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes plot-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes plot-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(14px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6%, -8%) scale(1.12);
+  }
+  66% {
+    transform: translate(-7%, 5%) scale(0.94);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 32s) linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/*
+ * Cards answer the pointer by lifting off the sheet, not by drawing a box
+ * around it. A reticle chasing the cursor was a second thing to track while
+ * you were trying to read the card under it.
+ */
+.spotlight {
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.spotlight:hover {
+  border-color: var(--dim);
+  box-shadow: 2px 4px 0 -1px var(--plate-shadow);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .reveal-mask > *,
+  .wipe {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+  [style*="plot-spin"],
+  [style*="plot-breathe"],
+  [style*="plot-drift"],
+  [style*="photo-morph"],
+  [style*="photo-spin"],
+  [style*="photo-pulse"] {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
+}
+
+/*
+ * A project preview promoted to fullscreen drops the shape the dossier layout
+ * gave it. Without this the aspect-ratio would keep constraining it to a strip
+ * in the middle of the screen.
+ */
+.preview-frame:fullscreen {
+  aspect-ratio: auto;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg);
+}

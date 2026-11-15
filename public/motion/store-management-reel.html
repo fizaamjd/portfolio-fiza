@@ -1,0 +1,268 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clothing Store | Motion reel</title>
+<meta name="description" content="A C# Windows Forms clothing store with admin and customer roles.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Courier+Prime:wght@400;700&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--studio);color:var(--t-ink);font-family:var(--t-font)}
+button{font:inherit;color:inherit;border:1px solid var(--t-rule);background:transparent;padding:9px 14px;cursor:pointer;border-radius:var(--t-radius,0)}
+button:hover{background:var(--t-ink);color:var(--t-bg)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--t-spot);outline-offset:3px}
+.studio{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--t-bg);color:var(--t-ink);border-bottom:1px solid var(--t-rule);font-size:14px}
+.wrap{height:calc(100dvh - 172px);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--studio)}
+.frame{position:relative;flex:none;overflow:hidden}
+.sheet{width:1200px;height:1200px;position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;background:var(--sheet)}
+.plate{position:absolute;left:0;top:262.5px;width:1200px;height:675px;overflow:hidden}
+.band{position:absolute;left:0;right:0;transition:opacity .3s}
+.band.top{top:0;height:262.5px}.band.bottom{bottom:0;height:262.5px}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+body.ready .scene{transition:opacity .45s ease,visibility .45s}
+.scene.live{opacity:1;visibility:visible}
+.film{position:absolute;object-fit:contain;display:block}
+.film[hidden]{display:none}
+.cue{opacity:0}
+body.ready .cue{transition:opacity .5s ease,transform .7s cubic-bezier(.16,1,.3,1),clip-path .8s cubic-bezier(.65,0,.35,1)}
+.cue.on{opacity:1}
+.cue.up{transform:translateY(18px)}.cue.up.on{transform:none}
+.cue.down{transform:translateY(-14px)}.cue.down.on{transform:none}
+.cue.left{transform:translateX(-24px)}.cue.left.on{transform:none}
+.cue.wipe{clip-path:inset(0 100% 0 0)}.cue.wipe.on{clip-path:inset(0 0 0 0)}
+.cue.drop{clip-path:inset(0 0 100% 0)}.cue.drop.on{clip-path:inset(0 0 0 0)}
+.pen{stroke-dasharray:1;stroke-dashoffset:1}
+body.ready .pen{transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1)}
+.draw.on .pen{stroke-dashoffset:0}
+.transport{height:116px;border-top:1px solid var(--t-rule);background:var(--t-bg);color:var(--t-ink);padding:14px 24px;display:flex;flex-direction:column;gap:11px}
+.transport-row{display:flex;align-items:center;gap:14px}
+.transport input{flex:1;accent-color:var(--t-spot);min-width:0}
+.time{font:12px var(--t-mono);min-width:92px;text-align:right}
+.chapters{display:flex;gap:8px;overflow-x:auto}
+.chapters button{font-size:12px;white-space:nowrap;padding:8px 12px}
+.chapters button[aria-current=true]{background:var(--t-ink);color:var(--t-bg)}
+.embed .studio,.embed .chapters{display:none}
+.embed .wrap{height:calc(100dvh - 60px)}
+.embed .transport{height:60px;padding:10px 14px}
+.bare .studio,.bare .transport{display:none}
+.bare .wrap{height:100dvh}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+:root{--studio:#D9D2C4;--sheet:#E4DED2;--ink:#23211E;--dim:#6B655C;--red:#C3392B;--paper:#FFFEFA;--kraft:#D6B888;
+--t-bg:#E4DED2;--t-ink:#23211E;--t-rule:#BDB4A4;--t-spot:#C3392B;
+--t-font:'Instrument Sans',system-ui,sans-serif;--t-mono:'Courier Prime',ui-monospace,monospace;
+--sign:'Big Shoulders Display','Arial Narrow',sans-serif;--rc:'Courier Prime',ui-monospace,monospace}
+.sheet{background-color:var(--sheet);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .17 0 0 0 0 .12 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* headline and the price tag that names the chapter */
+.tag{position:absolute;left:48px;top:34px;display:flex;align-items:center;gap:12px;height:34px;padding:0 16px 0 30px;background:var(--kraft);
+  font:700 14px var(--rc);letter-spacing:.06em;color:var(--ink);clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%)}
+.tag::before{content:"";position:absolute;left:14px;top:13px;width:8px;height:8px;border-radius:50%;background:var(--sheet)}
+.head{position:absolute;left:48px;top:84px;width:790px;margin:0;font:800 58px/.94 var(--sign);text-transform:uppercase;letter-spacing:.005em;color:var(--ink)}
+.cap{position:absolute;left:48px;top:572px;width:790px;margin:0;font:400 20px/1.45 var(--t-font);color:var(--dim)}
+
+/* the window onto the app */
+.film,.win{left:48px;top:212px;width:790px;height:347px}
+.film{background:#fff;border:2px solid var(--ink);box-shadow:10px 10px 0 var(--ink)}
+.win{position:absolute;background:#fff;border:2px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:30px 34px;display:grid;gap:16px;align-content:center}
+.layer{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:20px;padding:14px 18px;border:1.5px solid var(--ink)}
+.layer b{font:800 26px var(--sign);text-transform:uppercase}
+.layer span{font:16px/1.45 var(--rc)}
+.layer.bl{background:#F3EEE4}.layer.dl{background:var(--ink);color:var(--paper)}
+
+/* the printer and its receipt */
+.printer{position:absolute;left:858px;top:0;width:318px;height:20px;background:var(--ink);border-radius:0 0 6px 6px}
+.printer::after{content:"";position:absolute;left:14px;right:14px;bottom:5px;height:2px;background:#000}
+.receipt{position:absolute;left:872px;top:14px;width:290px;background:var(--paper);padding:20px 20px 16px;font:15px/24px var(--rc);color:var(--ink);
+  filter:drop-shadow(0 8px 10px rgba(50,38,20,.16))}
+.receipt::after{content:"";position:absolute;left:0;right:0;top:100%;height:8px;background:var(--paper);clip-path:polygon(0 0,290px 0,285.0px 0px,280.0px 8px,275.0px 0px,270.0px 8px,265.0px 0px,260.0px 8px,255.0px 0px,250.0px 8px,245.0px 0px,240.0px 8px,235.0px 0px,230.0px 8px,225.0px 0px,220.0px 8px,215.0px 0px,210.0px 8px,205.0px 0px,200.0px 8px,195.0px 0px,190.0px 8px,185.0px 0px,180.0px 8px,175.0px 0px,170.0px 8px,165.0px 0px,160.0px 8px,155.0px 0px,150.0px 8px,145.0px 0px,140.0px 8px,135.0px 0px,130.0px 8px,125.0px 0px,120.0px 8px,115.0px 0px,110.0px 8px,105.0px 0px,100.0px 8px,95.0px 0px,90.0px 8px,85.0px 0px,80.0px 8px,75.0px 0px,70.0px 8px,65.0px 0px,60.0px 8px,55.0px 0px,50.0px 8px,45.0px 0px,40.0px 8px,35.0px 0px,30.0px 8px,25.0px 0px,20.0px 8px,15.0px 0px,10.0px 8px,5.0px 0px,0px 8px)}
+.r-h{text-align:center;line-height:20px}.r-h b{display:block;font-size:19px;letter-spacing:.08em;margin-bottom:4px}
+.rl{display:flex;justify-content:space-between;gap:10px;max-height:0;overflow:hidden;opacity:0}
+body.ready .rl{transition:max-height .35s steps(4),opacity .2s}
+.rl.on{max-height:24px;opacity:1}
+.rl.dash{border-top:1.5px dashed var(--ink);margin:6px 0}.rl.dash.on{max-height:2px}
+.rl span:last-child{text-align:right}
+.r-bar{display:flex;flex-direction:column;align-items:center;gap:8px;max-height:0;overflow:hidden;opacity:0;font-size:13px}
+body.ready .r-bar{transition:max-height .5s steps(5),opacity .2s}
+.r-bar.on{max-height:96px;opacity:1;margin-top:10px}
+.stamp{display:block;width:max-content;margin:0 auto;max-height:0;overflow:hidden;padding:0 16px;border:3px solid var(--red);color:var(--red);font:800 36px var(--sign);letter-spacing:.12em;
+  opacity:0;transform:scale(1.5);mix-blend-mode:multiply}
+body.ready .stamp{transition:transform .25s cubic-bezier(.3,1.6,.6,1),opacity .15s,max-height .2s}
+.stamp.on{opacity:.9;transform:none;max-height:60px;padding:4px 16px;margin:6px auto 4px}
+
+/* bands */
+.awning{position:absolute;left:0;right:0;top:0;height:38px;background:repeating-linear-gradient(90deg,var(--ink) 0 60px,var(--paper) 60px 120px)}
+.band.top{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:30px}
+.band.top h1{margin:0;font:800 112px/.9 var(--sign);letter-spacing:.02em;color:var(--ink)}
+.band.top p{margin:16px 0 0;font:700 15px var(--rc);letter-spacing:.14em}
+.band.bottom{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.band.bottom .dash{width:880px;border-top:2px dashed var(--ink)}
+.band.bottom p{margin:0;font:700 14px var(--rc);letter-spacing:.12em}
+</style></head><body>
+<header class="studio"><strong>Clothing Store</strong><span>C# / .NET Framework 4.7.2</span></header>
+<main class="wrap"><div class="frame"><div class="sheet" id="sheet">
+<div class="band top"><div class="awning"></div><h1>CLOTHING STORE</h1><p>C# / WINDOWS FORMS / .NET 4.7.2 &middot; 2023</p></div>
+<div class="band bottom"><div class="dash"></div><p>SECOND YEAR OOP COURSEWORK &middot; FIZA AMJAD</p></div>
+<div class="plate" id="plate"><video id="film" class="film" muted playsinline preload="auto" src="/projects/store-management/demo.mp4"></video>
+
+<div class="printer"></div>
+<div class="receipt" aria-label="Receipt summarising the reel">
+  <div class="r-h"><b>CLOTHING STORE</b>thiscmsapp2 &middot; C# WinForms<br>OOP COURSEWORK &middot; 2023</div>
+  <div class="rl dash on"></div>
+  <div class="rl" data-g="2000"><span>SIGN IN</span><span>OK</span></div><div class="rl" data-g="5600"><span>ADD STOCK</span><span>NAME TYPE WEAR</span></div><div class="rl" data-g="11000"><span>ADMIN MENU</span><span>9 OPTIONS</span></div><div class="rl" data-g="13200"><span>CUSTOMER MENU</span><span>5 OPTIONS</span></div><div class="rl" data-g="15400"><span>myUser &gt;</span><span>myAdmin</span></div><div class="rl" data-g="16600"><span>myUser &gt;</span><span>myCustomer</span></div><div class="rl" data-g="21400"><span>ADD TO CART</span><span>ID + QTY</span></div><div class="rl" data-g="24600"><span>REMOVE FROM CART</span><span>ID</span></div><div class="rl" data-g="27800"><span>CONFIRM ORDER</span><span>BILL</span></div><div class="rl dash" data-g="28400"></div><div class="stamp" data-g="29000">CONFIRMED</div><div class="rl" data-g="31000"><span>FORMS</span><span>22</span></div><div class="rl" data-g="31500"><span>LAYERS</span><span>BL + DL</span></div><div class="rl" data-g="32000"><span>.NET FRAMEWORK</span><span>4.7.2</span></div>
+  <div class="r-bar" data-g="32700"><svg viewBox="0 0 150 44" width="230" height="44" fill="#23211E" aria-hidden="true"><rect x="0" width="6" height="44"/><rect x="10" width="6" height="44"/><rect x="20" width="6" height="44"/><rect x="34" width="2" height="44"/><rect x="42" width="4" height="44"/><rect x="54" width="6" height="44"/><rect x="64" width="6" height="44"/><rect x="74" width="6" height="44"/><rect x="88" width="2" height="44"/><rect x="96" width="4" height="44"/><rect x="108" width="6" height="44"/><rect x="118" width="6" height="44"/><rect x="128" width="6" height="44"/><rect x="142" width="2" height="44"/></svg><span>THE HABITS START HERE</span></div>
+</div>
+<section class="scene" data-name="The shop floor" data-duration="10100">
+  <div class="tag cue left" data-at="150">&numero; 01 &middot; THE SHOP FLOOR</div>
+  <h2 class="head cue up" data-at="250">A clothing store, in C#.</h2>
+  <p class="cap cue up" data-at="700">Windows Forms over a layered design: users and stock in their own business classes, persistence behind them.</p>
+</section>
+<section class="scene" data-name="Two roles" data-duration="9300">
+  <div class="tag cue left" data-at="150">&numero; 02 &middot; TWO ROLES</div>
+  <h2 class="head cue up" data-at="250">Admin on one side, customer on the other.</h2>
+  <p class="cap cue up" data-at="700">The admin adds stock and changes retail price, cost price and quantity. The customer browses and fills a cart.</p>
+</section>
+<section class="scene" data-name="Cart to bill" data-duration="11100">
+  <div class="tag cue left" data-at="150">&numero; 03 &middot; CART TO BILL</div>
+  <h2 class="head cue up" data-at="250">All the way to the receipt.</h2>
+  <p class="cap cue up" data-at="700">Products go into the cart by id and quantity, come back out again, and the order confirms into a bill.</p>
+</section>
+<section class="scene" data-name="What it taught" data-duration="5400">
+  <div class="tag cue left" data-at="150">&numero; 04 &middot; WHAT IT TAUGHT</div>
+  <h2 class="head cue up" data-at="250">Where the layers came from.</h2>
+  <div class="win">
+    <div class="layer cue wipe" data-at="400"><b>Forms &middot; 22</b><span>Signinform, Adminoptionsform, Custoptionsform, nine admin and six customer option forms</span></div>
+    <div class="layer bl cue wipe" data-at="1100"><b>Business</b><span>userBL: myUser &gt; myAdmin, myCustomer<br>stockBL: MyProduct, Category, Stock</span></div>
+    <div class="layer dl cue wipe" data-at="1800"><b>Data</b><span>myUserDL &middot; myproductDL, kept behind the business layer</span></div>
+  </div>
+  <p class="cap cue up" data-at="700">Inheritance from a shared myUser, getters and setters on every stock field, data kept behind business logic.</p>
+</section>
+</div>
+</div></div></main>
+<nav class="transport">
+  <div class="transport-row">
+    <button id="play">Pause</button><button id="restart">Replay</button>
+    <input id="seek" type="range" min="0" max="100" step="100" value="0" aria-label="Seek reel">
+    <span class="time" id="time">0:00 / 0:00</span>
+  </div>
+  <div class="chapters" id="chapters"></div>
+</nav>
+<script></script>
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);
+const scenes=[...document.querySelectorAll('.scene')];
+const durations=scenes.map(s=>+s.dataset.duration);
+const starts=durations.map((d,i)=>durations.slice(0,i).reduce((a,b)=>a+b,0));
+const total=durations.reduce((a,b)=>a+b,0);
+const FILM_SECONDS=30.5;
+const q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.slice(1));
+if(q.get('embed')==='1')document.body.classList.add('embed');
+if(q.get('chrome')==='0')document.body.classList.add('embed','bare');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+let elapsed=0,index=-1,playing=false,last=0,rate=1;
+
+const cues=[...document.querySelectorAll('[data-at],[data-g]')].map(el=>{
+  const sc=el.closest('.scene'),si=sc?scenes.indexOf(sc):-1,g=el.hasAttribute('data-g');
+  const base=(g||si<0)?0:starts[si];
+  const at=base+Number(g?el.dataset.g:el.dataset.at);
+  const raw=g?el.dataset.gout:el.dataset.out;
+  const out=raw!=null?base+Number(raw):(!g&&si>=0?starts[si]+durations[si]:Infinity);
+  return {el,at,out};
+});
+
+/* The sheet is 1200 square with a 16:9 plate across its middle. A frame
+   wider than 1.45 shows the plate edge to edge; anything squarer shows the
+   whole sheet, bands included. Nothing in between, so a band is never cut
+   off halfway. */
+function fit(){
+  const wrap=document.querySelector('.wrap'),f=document.querySelector('.frame'),sheet=$('sheet');
+  const r=wrap.getBoundingClientRect(),fw=Math.max(1,r.width),fh=Math.max(1,r.height);
+  const SW=1200,SH=1200,PY=262.5,PW=1200,PH=675;
+  const bands=document.querySelectorAll('.band');
+  if(!document.body.classList.contains('embed')){
+    const s=Math.max(.01,Math.min((fw-16)/SW,(fh-16)/SH));
+    sheet.style.transform='scale('+s+')';f.style.width=SW*s+'px';f.style.height=SH*s+'px';
+    bands.forEach(b=>b.style.opacity='1');return;
+  }
+  const a=fw/fh,plate=a>=1.45;
+  const minW=plate?PW:SW,minH=plate?PH:SH;
+  const cx=SW/2,cy=plate?PY+PH/2:SH/2;
+  const rw=Math.max(minW,minH*a),rh=Math.max(minH,minW/a);
+  const s=Math.max(.01,fw/rw),ox=cx-rw/2,oy=cy-rh/2;
+  sheet.style.transform='translate('+(-ox*s)+'px,'+(-oy*s)+'px) scale('+s+')';
+  f.style.width=fw+'px';f.style.height=fh+'px';
+  bands.forEach(b=>b.style.opacity=plate?'0':'1');
+  document.body.classList.toggle('portrait',!plate);
+}
+new ResizeObserver(fit).observe(document.querySelector('.wrap'));
+addEventListener('resize',fit);
+
+const buttons=scenes.map((s,i)=>{const b=document.createElement('button');b.textContent=s.dataset.name;
+  b.onclick=()=>{seek(starts[i]);setPlaying(false)};$('chapters').append(b);return b});
+function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function draw(){
+  let i=0;while(i<durations.length-1&&elapsed>=starts[i+1])i++;
+  if(i!==index){index=i;
+    scenes.forEach((s,n)=>{s.classList.toggle('live',n===i);s.inert=n!==i;s.setAttribute('aria-hidden',String(n!==i))});
+    document.body.dataset.scene=String(i);
+    buttons.forEach((b,n)=>b.setAttribute('aria-current',String(n===i)));
+    document.querySelectorAll('[data-bind=name]').forEach(el=>el.textContent=scenes[i].dataset.name);
+    document.querySelectorAll('[data-bind=index]').forEach(el=>el.textContent=String(i+1).padStart(2,'0'));
+  }
+  for(const c of cues)c.el.classList.toggle('on',elapsed>=c.at&&elapsed<c.out);
+  document.querySelectorAll('[data-bind=count]').forEach(el=>el.textContent=String(scenes.length).padStart(2,'0'));
+  if(typeof window.REEL_TICK==='function')window.REEL_TICK(elapsed,index,elapsed-starts[index],total,starts,durations);
+  syncFilm(false);
+  $('seek').value=String(elapsed);$('time').textContent=fmt(elapsed)+' / '+fmt(total);
+}
+const film=$('film');
+/* The footage runs on its own clock; the reel only nudges it back into step
+   when they drift or when someone seeks. Setting currentTime every frame
+   makes it stutter. */
+function syncFilm(force){
+  if(!film)return;
+  const t=elapsed/1000;
+  const over=t>=FILM_SECONDS;document.body.classList.toggle('film-over',over);
+  if(over){film.hidden=true;if(!film.paused)film.pause();return}
+  film.hidden=false;
+  if(force||Math.abs(film.currentTime-t)>0.34)film.currentTime=t;
+  if(film.playbackRate!==rate)film.playbackRate=rate;
+  if(playing&&film.paused)film.play().catch(()=>{});
+  if(!playing&&!film.paused)film.pause();
+}
+function seek(ms){elapsed=Math.max(0,Math.min(total,ms));draw();syncFilm(true)}
+function setPlaying(v){playing=Boolean(v)&&!reduce.matches;$('play').textContent=playing?'Pause':'Play';
+  document.body.classList.toggle('playing',playing);last=0;syncFilm(false)}
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!playing){last=now;return}
+  if(!last)last=now;
+  const dt=Math.min(now-last,100)*rate;last=now;
+  elapsed=Math.min(total,elapsed+dt);
+  if(elapsed>=total){if(document.body.classList.contains('bare')){elapsed=0;syncFilm(true)}else setPlaying(false)}
+  draw();
+}
+$('play').onclick=()=>{if(elapsed>=total)elapsed=0;setPlaying(!playing)};
+$('restart').onclick=()=>{seek(0);setPlaying(true)};
+$('seek').max=String(total);
+$('seek').oninput=e=>{seek(Number(e.target.value));setPlaying(false)};
+addEventListener('message',e=>{if(e.origin!==location.origin)return;const c=e.data&&e.data.reel;
+  if(c==='play')setPlaying(true);else if(c==='pause')setPlaying(false);
+  else if(c==='restart'){seek(0);setPlaying(true)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)setPlaying(false)});
+addEventListener('keydown',e=>{const t=e.target;if(t&&/^(BUTTON|INPUT|A)$/.test(t.tagName))return;
+  if(e.code==='Space'){e.preventDefault();setPlaying(!playing)}
+  if(e.key.toLowerCase()==='r'){seek(0);setPlaying(true)}});
+window.__reelInfo={total,durations,names:scenes.map(s=>s.dataset.name)};
+window.__seekReel=ms=>{seek(ms);setPlaying(false);return{scene:index,time:elapsed}};
+window.__reelState=()=>({time:elapsed,playing,scene:index});
+window.__setReelPlaying=v=>{if(v&&elapsed>=total)seek(0);setPlaying(v)};
+window.__restartReel=()=>{seek(0);setPlaying(true)};
+window.__setReelRate=r=>{rate=Math.max(.25,Math.min(3,Number(r)||1))};
+fit();draw();
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('ready')));
+setPlaying(!reduce.matches&&q.get('paused')!=='1'&&h.get('paused')!=='1');
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

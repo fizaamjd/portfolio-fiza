@@ -1,0 +1,375 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiza Amjad | Motion reel</title>
+<meta name="description" content="A short motion intro: who Fiza is, the column she works across, and how she works.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--studio);color:var(--t-ink);font-family:var(--t-font)}
+button{font:inherit;color:inherit;border:1px solid var(--t-rule);background:transparent;padding:9px 14px;cursor:pointer;border-radius:var(--t-radius,0)}
+button:hover{background:var(--t-ink);color:var(--t-bg)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--t-spot);outline-offset:3px}
+.studio{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--t-bg);color:var(--t-ink);border-bottom:1px solid var(--t-rule);font-size:14px}
+.wrap{height:calc(100dvh - 172px);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--studio)}
+.frame{position:relative;flex:none;overflow:hidden}
+.sheet{width:1200px;height:1200px;position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;background:var(--sheet)}
+.plate{position:absolute;left:0;top:262.5px;width:1200px;height:675px;overflow:hidden}
+.band{position:absolute;left:0;right:0;transition:opacity .3s}
+.band.top{top:0;height:262.5px}.band.bottom{bottom:0;height:262.5px}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+body.ready .scene{transition:opacity .45s ease,visibility .45s}
+.scene.live{opacity:1;visibility:visible}
+.film{position:absolute;object-fit:contain;display:block}
+.film[hidden]{display:none}
+.cue{opacity:0}
+body.ready .cue{transition:opacity .5s ease,transform .7s cubic-bezier(.16,1,.3,1),clip-path .8s cubic-bezier(.65,0,.35,1)}
+.cue.on{opacity:1}
+.cue.up{transform:translateY(18px)}.cue.up.on{transform:none}
+.cue.down{transform:translateY(-14px)}.cue.down.on{transform:none}
+.cue.left{transform:translateX(-24px)}.cue.left.on{transform:none}
+.cue.wipe{clip-path:inset(0 100% 0 0)}.cue.wipe.on{clip-path:inset(0 0 0 0)}
+.cue.drop{clip-path:inset(0 0 100% 0)}.cue.drop.on{clip-path:inset(0 0 0 0)}
+.pen{stroke-dasharray:1;stroke-dashoffset:1}
+body.ready .pen{transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1)}
+.draw.on .pen{stroke-dashoffset:0}
+.transport{height:116px;border-top:1px solid var(--t-rule);background:var(--t-bg);color:var(--t-ink);padding:14px 24px;display:flex;flex-direction:column;gap:11px}
+.transport-row{display:flex;align-items:center;gap:14px}
+.transport input{flex:1;accent-color:var(--t-spot);min-width:0}
+.time{font:12px var(--t-mono);min-width:92px;text-align:right}
+.chapters{display:flex;gap:8px;overflow-x:auto}
+.chapters button{font-size:12px;white-space:nowrap;padding:8px 12px}
+.chapters button[aria-current=true]{background:var(--t-ink);color:var(--t-bg)}
+.embed .studio,.embed .chapters{display:none}
+.embed .wrap{height:calc(100dvh - 60px)}
+.embed .transport{height:60px;padding:10px 14px}
+.bare .studio,.bare .transport{display:none}
+.bare .wrap{height:100dvh}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+:root{--studio:#E4ECF2;--sheet:#E4ECF2;--paper:#E4ECF2;--paper2:#D6E2EA;--ink:#0D2637;--maroon:#7B2233;--blue:#17557F;--dim:#3D6076;
+--t-bg:#E4ECF2;--t-ink:#0D2637;--t-rule:#ACC0CF;--t-spot:#7B2233;
+--t-font:'Schibsted Grotesk',system-ui,sans-serif;--t-mono:'Martian Mono',ui-monospace,monospace;
+--disp:'Figtree',system-ui,sans-serif;--mono:'Martian Mono',ui-monospace,monospace;--body:'Figtree',system-ui,sans-serif;
+--chrome:#3D6076}
+.sheet{background:var(--paper)}
+.plate{background-color:var(--paper);background-image:linear-gradient(rgba(23,85,127,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(23,85,127,.07) 1px,transparent 1px);background-size:40px 40px}
+body[data-scene="3"],body[data-scene="7"]{--chrome:rgba(228,236,242,.6)}
+body[data-scene="4"]{--chrome:rgba(228,236,242,.7)}
+.chrome{position:absolute;z-index:20;font:400 9.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--chrome);transition:color .4s}
+.chrome.tl{left:26px;top:20px;font:800 17px var(--disp);letter-spacing:-.03em;text-transform:none}.chrome.tl i{font-style:normal;color:var(--maroon)}
+.chrome.tr{right:26px;top:24px}.chrome.bl{left:26px;bottom:18px}.chrome.br{right:26px;bottom:18px}
+.disp{font-family:var(--disp);font-weight:650;letter-spacing:-.035em;line-height:.95;color:var(--ink);margin:0}
+.mono{font:400 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.dot{color:var(--maroon)}
+.ground{position:absolute;inset:0}
+
+/* 1 hello */
+.dark{position:absolute;inset:0;background:var(--ink);z-index:2}
+body.ready .dark.cue{transition:clip-path .7s cubic-bezier(.65,0,.35,1)}
+.dark.cue{opacity:1;clip-path:inset(0 0 0 0)}.dark.cue.on{clip-path:inset(0 0 0 100%)}
+.caret{position:absolute;left:330px;top:258px;width:4px;height:150px;background:var(--maroon);z-index:3;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+body:not(.playing) .caret{animation-play-state:paused}
+.hello{position:absolute;left:330px;top:250px;font-size:170px;white-space:nowrap}
+.insp{position:absolute;left:316px;top:236px;width:470px;height:190px;border:1.5px solid var(--blue);z-index:4;
+  background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(23,85,127,.07) 6px 7px)}
+.insp::before{content:"";position:absolute;inset:14px;background:rgba(228,236,242,.82)}
+.insp .tag{position:absolute;left:-1.5px;top:-30px;padding:5px 9px;background:var(--blue);color:#fff;font:500 10.5px var(--mono);letter-spacing:.04em;white-space:nowrap}
+.insp .tag b{color:#BFE0F5;font-weight:500}
+.insp .h{position:absolute;left:0;right:0;bottom:-26px;text-align:center;font:400 10px var(--mono);color:var(--blue)}
+.guide{position:absolute;border-color:rgba(23,85,127,.4);border-style:dashed;border-width:0;z-index:3}
+.guide.x{left:0;right:0;border-top-width:1px}.guide.y{top:0;bottom:0;border-left-width:1px}
+.hello-text{position:relative;z-index:5}
+.cursor{position:absolute;z-index:8;display:flex;align-items:flex-start;gap:2px}
+.cursor span{margin-top:22px;padding:3px 7px;border-radius:3px;background:var(--maroon);color:#fff;font:500 10px var(--mono)}
+
+/* 2 name */
+.orbit{position:absolute;right:96px;top:118px;width:420px;height:420px;z-index:1}
+.orbit .ring{position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(23,85,127,.45);animation:spin 26s linear infinite}
+.orbit .ring::before{content:"";position:absolute;left:50%;top:-6px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:var(--maroon)}
+.orbit .ring2{position:absolute;inset:-26px;border-radius:50%;border:1px solid rgba(23,85,127,.14)}
+.photo{position:absolute;inset:34px;border-radius:50%;overflow:hidden;background:var(--paper2);animation:floaty 5.5s ease-in-out infinite;
+  box-shadow:0 30px 60px -30px rgba(13,38,55,.55)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:50% 16%;filter:grayscale(1) contrast(1.12) brightness(1.05);mix-blend-mode:multiply}
+.photo::after{content:"";position:absolute;inset:0;background:var(--blue);mix-blend-mode:screen;opacity:.32}
+.orbit .lbl{position:absolute;right:-6px;bottom:44px;z-index:2;padding:5px 9px;border-radius:20px;background:var(--ink);color:#fff;font:400 9.5px var(--mono);letter-spacing:.08em;animation:floaty 5.5s ease-in-out infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+body:not(.playing) .orbit *{animation-play-state:paused}
+.name{position:absolute;left:64px;top:150px;z-index:3}
+.name .im{font:600 22px var(--disp);letter-spacing:.02em;color:var(--ink);margin-bottom:10px}
+.name .disp{font-size:158px}
+.name .row{display:flex}
+.ch{display:inline-block}
+.name .mono{margin-top:22px}
+
+/* 3 role */
+.role{position:absolute;left:64px;top:120px}
+.role .disp{font-size:150px}
+.alchip{position:absolute;padding:4px 8px;border:1px solid var(--blue);color:var(--blue);background:var(--paper);font:400 9.5px var(--mono);letter-spacing:.04em;white-space:nowrap}
+.swap{position:absolute;left:64px;top:150px}
+.swap .disp{font-size:178px;letter-spacing:-.06em;white-space:nowrap}
+.slash{display:inline-block;color:var(--maroon);transform-origin:50% 100%}
+.swap .mono{margin-top:18px}
+
+/* 4 toggle */
+.night{position:absolute;inset:0;background:var(--ink)}
+.tg-cap{position:absolute;left:0;right:0;top:170px;text-align:center;color:rgba(228,236,242,.55)}
+.tg{position:absolute;left:470px;top:210px;width:260px;height:132px;border-radius:66px;background:#1F3D52;transition:background .35s}
+.tg i{position:absolute;left:10px;top:10px;width:112px;height:112px;border-radius:50%;background:#F4F7FA;transition:transform .45s cubic-bezier(.5,1.6,.5,1)}
+.tg.on{background:var(--maroon)}.tg.on i{transform:translateX(128px)}
+.tg-l{position:absolute;top:262px;font:400 11px var(--mono);letter-spacing:.14em;color:rgba(228,236,242,.4)}
+.tg-l.off{left:386px}.tg-l.on{left:752px}
+.tg-word{position:absolute;left:0;right:0;top:384px;text-align:center;font:800 64px var(--disp);letter-spacing:-.04em}
+.tg-word.a{color:rgba(228,236,242,.32)}.tg-word.b{color:#F4F7FA}
+.tg-sub{position:absolute;left:0;right:0;top:472px;text-align:center;color:rgba(228,236,242,.6)}
+
+/* 5 column */
+.wine{position:absolute;inset:0;background:var(--maroon)}
+.col-h{position:absolute;left:64px;top:96px;color:#F4ECEE}
+.col-h .disp{color:#F4ECEE;font-size:82px}
+.col-h .mono{color:rgba(244,236,238,.7);margin-top:16px}
+.stack{position:absolute;left:600px;top:96px;width:540px;display:grid;gap:10px}
+.lay{display:grid;grid-template-columns:34px 140px 1fr 78px;align-items:center;gap:12px;height:62px;padding:0 16px;background:rgba(244,236,238,.08);border:1px solid rgba(244,236,238,.22);color:#F4ECEE}
+.lay b{font:400 11px var(--mono);color:rgba(244,236,238,.6)}
+.lay strong{font:700 21px var(--disp);letter-spacing:-.02em}
+.lay em{display:block;height:6px;background:rgba(244,236,238,.85);font-style:normal;transform-origin:left;transform:scaleX(0);transition:transform .9s cubic-bezier(.16,1,.3,1)}
+.lay.on em{transform:scaleX(var(--w))}
+.lay span{font:400 10.5px var(--mono);text-align:right;color:rgba(244,236,238,.75)}
+
+/* 6 how I work */
+.how-h{position:absolute;left:64px;top:110px;font:600 30px var(--body);color:var(--ink)}
+.how-h svg{display:block;margin-top:4px}
+.track{position:absolute;left:0;top:300px;height:120px;width:2400px;will-change:transform}
+.step{position:absolute;top:24px;height:72px;padding:0 30px;display:flex;align-items:center;border:2px solid var(--ink);border-radius:40px;
+  font:700 34px var(--disp);letter-spacing:-.03em;color:var(--ink);background:var(--paper);white-space:nowrap}
+.step small{position:absolute;left:28px;top:-26px;font:400 10px var(--mono);letter-spacing:.14em;color:var(--dim)}
+.step.last{background:var(--maroon);border-color:var(--maroon);color:#fff}
+.track svg{position:absolute;left:0;top:0;overflow:visible}
+.track path{fill:none;stroke:var(--blue);stroke-width:2.5;stroke-linecap:round}
+
+/* 7 card */
+.card{position:absolute;left:64px;right:64px;top:92px}
+.card .disp{font-size:142px}
+.card .rule{height:2px;background:var(--ink);margin:18px 0 14px;transform-origin:left}
+.card .meta{display:flex;justify-content:space-between;font:800 30px var(--disp);letter-spacing:-.02em;color:var(--ink)}
+.card .meta span:last-child{color:var(--maroon)}
+.card .tags{margin-top:12px}
+.card .count{position:absolute;right:0;top:330px;text-align:right}
+.card .count .disp{font-size:96px}
+.card .count svg{display:block;margin-left:auto}
+.card .typed{position:absolute;left:0;top:372px;font:400 24px var(--body);color:var(--dim)}
+.card .typed i{display:inline-block;width:2px;height:26px;background:var(--maroon);vertical-align:-5px;margin-left:2px;animation:blink 1s steps(1) infinite}
+
+/* 8 sign-off */
+.sign{position:absolute;inset:0;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+.sign svg{width:118px;height:118px;fill:#F4F7FA}
+.pop{opacity:0;transform:scale(.4)}
+body.ready .pop{transition:opacity .3s,transform .6s cubic-bezier(.3,1.6,.5,1)}
+.pop.on{opacity:1;transform:none}
+.sign .h{font:800 44px var(--disp);letter-spacing:-.03em;color:#F4F7FA}
+.sign .mono{color:rgba(228,236,242,.6)}
+.sign .down{margin-top:18px;font:400 12px var(--mono);letter-spacing:.2em;color:#E9B8C2}
+</style></head><body>
+<header class="studio"><strong>Fiza Amjad</strong><span>Intro</span></header>
+<main class="wrap"><div class="frame"><div class="sheet" id="sheet">
+
+<div class="plate" id="plate">
+<div class="chrome tl">fiza<i>.</i></div><div class="chrome tr">Full-stack engineer &middot; Lahore</div>
+<div class="chrome bl" id="tc">00:00:00</div><div class="chrome br">Portfolio &rsquo;26</div>
+<section class="scene" data-name="Hello" data-duration="4200">
+  <div class="caret cue" data-at="0" data-out="350" style="z-index:3"></div>
+  <div class="guide x cue" data-at="2100" style="top:236px"></div><div class="guide x cue" data-at="2100" style="top:426px"></div>
+  <div class="guide y cue" data-at="2100" style="left:316px"></div><div class="guide y cue" data-at="2100" style="left:786px"></div>
+  <div class="insp cue" data-at="2000"><span class="tag">h1<b>.hello</b> &nbsp;470 &times; 190</span><span class="h">padding 14 &middot; display block</span></div>
+  <div class="hello"><span class="disp hello-text" data-type="hello." data-type-at="350" data-type-dur="900"></span></div>
+  <div class="cursor cue" data-at="2500" id="cur1"><svg width="22" height="28" viewBox="0 0 22 28" aria-hidden="true"><path d="M2 2v21l5.5-5.2 4 8.2 3.6-1.7-4-8.1 7.6-.4z" fill="#0D2637" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>fiza</span></div></section>
+<section class="scene" data-name="Name" data-duration="4400">
+  <div class="orbit pop" data-at="200"><i class="ring2"></i><i class="ring"></i><div class="photo"><img src="/profile.png" alt=""></div><span class="lbl">fiza &middot; lahore</span></div>
+  <div class="name"><div class="im cue up" data-at="700">I'M</div>
+    <div class="disp row"><span class="ch cue up " data-at="850"><span>F</span></span><span class="ch cue up " data-at="905"><span>I</span></span><span class="ch cue up " data-at="960"><span>Z</span></span><span class="ch cue up " data-at="1015"><span>A</span></span></div>
+    <div class="disp row"><span class="ch cue up " data-at="1150"><span>A</span></span><span class="ch cue up " data-at="1205"><span>M</span></span><span class="ch cue up " data-at="1260"><span>J</span></span><span class="ch cue up " data-at="1315"><span>A</span></span><span class="ch cue up " data-at="1370"><span>D</span></span><span class="ch cue up " data-at="1425"><span class="dot">.</span></span></div>
+    <div class="mono cue up" data-at="2000">Full-stack engineer &middot; Lahore, Pakistan</div></div></section>
+<section class="scene" data-name="Role" data-duration="3900">
+  <div class="role cue" data-at="0" data-out="2100"><div class="disp row"><span class="ch cue up " data-at="100"><span>F</span></span><span class="ch cue up " data-at="140"><span>U</span></span><span class="ch cue up " data-at="180"><span>L</span></span><span class="ch cue up " data-at="220"><span>L</span></span><span class="ch cue up " data-at="260"><span>-</span></span><span class="ch cue up " data-at="300"><span>S</span></span><span class="ch cue up " data-at="340"><span>T</span></span><span class="ch cue up " data-at="380"><span>A</span></span><span class="ch cue up " data-at="420"><span>C</span></span><span class="ch cue up " data-at="460"><span>K</span></span></div>
+    <div class="disp row" style="margin-top:8px"><span class="ch cue up " data-at="420"><span>E</span></span><span class="ch cue up " data-at="460"><span>N</span></span><span class="ch cue up " data-at="500"><span>G</span></span><span class="ch cue up " data-at="540"><span>I</span></span><span class="ch cue up " data-at="580"><span>N</span></span><span class="ch cue up " data-at="620"><span>E</span></span><span class="ch cue up " data-at="660"><span>E</span></span><span class="ch cue up " data-at="700"><span>R</span></span><span class="ch cue up " data-at="740"><span class="dot">.</span></span></div></div>
+  <div class="alchip cue" data-at="900" data-out="2100" style="left:64px;top:92px">auto layout &middot; vertical &middot; gap 8</div>
+  <div class="alchip cue" data-at="1100" data-out="2100" style="left:900px;top:430px">hug contents</div>
+  <div class="swap"><div class="disp"><span class="ch cue up " data-at="2200"><span>A</span></span><span class="ch cue up " data-at="2270"><span>I</span></span><span class="slash cue up" data-at="2420">/</span><span class="ch cue up " data-at="2520"><span>S</span></span><span class="ch cue up " data-at="2565"><span>Y</span></span><span class="ch cue up " data-at="2610"><span>S</span></span><span class="ch cue up " data-at="2655"><span>T</span></span><span class="ch cue up " data-at="2700"><span>E</span></span><span class="ch cue up " data-at="2745"><span>M</span></span><span class="ch cue up " data-at="2790"><span>S</span></span></div>
+    <div class="mono cue up" data-at="3000">Models that explain &middot; services that hold &middot; C down to the kernel</div></div></section>
+<section class="scene" data-name="Toggle" data-duration="3800">
+  <div class="night"></div>
+  <div class="tg-cap mono cue" data-at="200">toggle &middot; release mode</div>
+  <span class="tg-l off cue" data-at="200">DEMO</span><span class="tg-l on cue" data-at="200">PROD</span>
+  <div class="tg cue" data-at="200" id="tg"><i></i></div>
+  <div class="tg-word a cue" data-at="400" data-out="1750">just a demo.</div>
+  <div class="tg-word b cue up" data-at="1850">shipped<span class="dot">.</span></div>
+  <div class="tg-sub mono cue up" data-at="2200">four client-facing products &middot; a team of six</div>
+  <div class="cursor cue" data-at="700" data-out="2400" id="cur2"><svg width="22" height="28" viewBox="0 0 22 28" aria-hidden="true"><path d="M2 2v21l5.5-5.2 4 8.2 3.6-1.7-4-8.1 7.6-.4z" fill="#0D2637" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>fiza</span></div></section>
+<section class="scene" data-name="The column" data-duration="4700">
+  <div class="wine"></div>
+  <div class="col-h"><div class="disp cue up" data-at="150">the whole<br>column<span style="color:#F4ECEE">.</span></div>
+    <div class="mono cue up" data-at="500">Not one layer of the system.<br>Every layer, and the seams between.</div></div>
+  <div class="stack"><div class="lay cue left" data-at="700" style="--w:0.183"><b>01</b><strong>Interface</strong><em></em><span>200 m</span></div><div class="lay cue left" data-at="960" style="--w:0.365"><b>02</b><strong>Service</strong><em></em><span>800 m</span></div><div class="lay cue left" data-at="1220" style="--w:0.516"><b>03</b><strong>Persistence</strong><em></em><span>1,600 m</span></div><div class="lay cue left" data-at="1480" style="--w:0.707"><b>04</b><strong>Inference</strong><em></em><span>3,000 m</span></div><div class="lay cue left" data-at="1740" style="--w:0.866"><b>05</b><strong>Distributed</strong><em></em><span>4,500 m</span></div><div class="lay cue left" data-at="2000" style="--w:1.000"><b>06</b><strong>Kernel</strong><em></em><span>6,000 m</span></div></div></section>
+<section class="scene" data-name="How I work" data-duration="4600">
+  <div class="how-h cue up" data-at="100">How I work<svg width="150" height="10" viewBox="0 0 150 10"><path d="M2 6 Q40 1 75 5 T148 4" stroke="#7B2233" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+  <div class="track" id="track"><svg width="2400" height="120"><g class="draw" data-at="300"><path class="pen" pathLength="1" d="M444 60 C481.0 20,501.0 100,511.0 60 S558 30,578 60"/><path class="pen" pathLength="1" d="M784 60 C821.0 20,841.0 100,851.0 60 S898 30,918 60"/><path class="pen" pathLength="1" d="M1061 60 C1098.0 20,1118.0 100,1128.0 60 S1175 30,1195 60"/><path class="pen" pathLength="1" d="M1464 60 C1501.0 20,1521.0 100,1531.0 60 S1578 30,1598 60"/><path class="pen" pathLength="1" d="M1783 60 C1820.0 20,1840.0 100,1850.0 60 S1897 30,1917 60"/></g></svg><div class="step" style="left:120px"><small>STEP 01</small>Requirements</div><div class="step" style="left:586px"><small>STEP 02</small>Schema</div><div class="step" style="left:926px"><small>STEP 03</small>API</div><div class="step" style="left:1203px"><small>STEP 04</small>Interface</div><div class="step" style="left:1606px"><small>STEP 05</small>Tests</div><div class="step last" style="left:1925px"><small>STEP 06</small>Ship it</div></div></section>
+<section class="scene" data-name="Card" data-duration="4600">
+  <div class="card"><div class="disp"><span class="ch cue up " data-at="100"><span>F</span></span><span class="ch cue up " data-at="140"><span>I</span></span><span class="ch cue up " data-at="180"><span>Z</span></span><span class="ch cue up " data-at="220"><span>A</span></span> <span class="ch cue up " data-at="300"><span>A</span></span><span class="ch cue up " data-at="340"><span>M</span></span><span class="ch cue up " data-at="380"><span>J</span></span><span class="ch cue up " data-at="420"><span>A</span></span><span class="ch cue up " data-at="460"><span>D</span></span><span class="ch cue up " data-at="500"><span class="dot">.</span></span></div>
+    <div class="rule cue wipe" data-at="700"></div>
+    <div class="meta cue up" data-at="900"><span>FULL-STACK ENGINEER</span><span>AI / BACKEND / SYSTEMS</span></div>
+    <div class="tags mono cue up" data-at="1150">LLM products &middot; APIs &middot; schemas &middot; kernel-mode C &middot; Unity</div>
+    <div class="count cue up" data-at="1500"><div class="disp">15 projects<span class="dot">.</span></div>
+      <svg width="420" height="14" viewBox="0 0 420 14"><g class="draw" data-at="1900"><path class="pen" pathLength="1" d="M4 8 Q60 2 110 8 T220 7 T330 8 T416 6" stroke="#7B2233" stroke-width="3" fill="none" stroke-linecap="round"/></g></svg></div>
+    <div class="typed"><span data-type="let's build something that holds up." data-type-at="2300" data-type-dur="1700"></span><i></i></div></div></section>
+<section class="scene" data-name="Sign-off" data-duration="3000">
+  <div class="sign"><svg class="pop" data-at="200" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    <div class="h cue up" data-at="600">@fizaamjd</div>
+    <div class="mono cue up" data-at="900">github.com/fizaamjd</div>
+    <div class="down cue up" data-at="1500">&darr; &nbsp;the work</div></div></section>
+</div>
+</div></div></main>
+<nav class="transport">
+  <div class="transport-row">
+    <button id="play">Pause</button><button id="restart">Replay</button>
+    <input id="seek" type="range" min="0" max="100" step="100" value="0" aria-label="Seek reel">
+    <span class="time" id="time">0:00 / 0:00</span>
+  </div>
+  <div class="chapters" id="chapters"></div>
+</nav>
+<script>
+(function(){
+function typeInto(el,local){const at=+el.dataset.typeAt,d=+el.dataset.typeDur,full=el.dataset.type;
+  const n=Math.round(Math.max(0,Math.min(1,(local-at)/d))*full.length);if(el.dataset.n==n)return;el.dataset.n=n;
+  const s=full.slice(0,n);el.innerHTML=s.replace(/\./g,'<span class="dot">.</span>');}
+function lerp(a,b,k){return a+(b-a)*k}
+function ease(k){k=Math.max(0,Math.min(1,k));return k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2}
+window.REEL_TICK=function(t,i,local){
+  document.querySelectorAll('.scene.live [data-type]').forEach(el=>typeInto(el,local));
+  const f=Math.floor(t/1000*30)%30,s=Math.floor(t/1000);
+  document.getElementById('tc').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')+':'+String(f).padStart(2,'0');
+  if(i===0){const k=ease((local-2500)/900);document.getElementById('cur1').style.transform='translate('+lerp(1040,800,k)+'px,'+lerp(560,410,k)+'px)';}
+  if(i===3){const k=ease((local-700)/800);document.getElementById('cur2').style.transform='translate('+lerp(900,560,k)+'px,'+lerp(520,300,k)+'px)';
+    document.getElementById('tg').classList.toggle('on',local>=1600);}
+  if(i===5){const k=ease((local-500)/3600);document.getElementById('track').style.transform='translateX('+lerp(60,-1180,k)+'px)';}
+};})();</script>
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);
+const scenes=[...document.querySelectorAll('.scene')];
+const durations=scenes.map(s=>+s.dataset.duration);
+const starts=durations.map((d,i)=>durations.slice(0,i).reduce((a,b)=>a+b,0));
+const total=durations.reduce((a,b)=>a+b,0);
+const FILM_SECONDS=0;
+const q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.slice(1));
+if(q.get('embed')==='1')document.body.classList.add('embed');
+if(q.get('chrome')==='0')document.body.classList.add('embed','bare');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+let elapsed=0,index=-1,playing=false,last=0,rate=1;
+
+const cues=[...document.querySelectorAll('[data-at],[data-g]')].map(el=>{
+  const sc=el.closest('.scene'),si=sc?scenes.indexOf(sc):-1,g=el.hasAttribute('data-g');
+  const base=(g||si<0)?0:starts[si];
+  const at=base+Number(g?el.dataset.g:el.dataset.at);
+  const raw=g?el.dataset.gout:el.dataset.out;
+  const out=raw!=null?base+Number(raw):(!g&&si>=0?starts[si]+durations[si]:Infinity);
+  return {el,at,out};
+});
+
+/* The sheet is 1200 square with a 16:9 plate across its middle. A frame
+   wider than 1.45 shows the plate edge to edge; anything squarer shows the
+   whole sheet, bands included. Nothing in between, so a band is never cut
+   off halfway. */
+function fit(){
+  const wrap=document.querySelector('.wrap'),f=document.querySelector('.frame'),sheet=$('sheet');
+  const r=wrap.getBoundingClientRect(),fw=Math.max(1,r.width),fh=Math.max(1,r.height);
+  const SW=1200,SH=1200,PY=262.5,PW=1200,PH=675;
+  const bands=document.querySelectorAll('.band');
+  if(!document.body.classList.contains('embed')){
+    const s=Math.max(.01,Math.min((fw-16)/SW,(fh-16)/SH));
+    sheet.style.transform='scale('+s+')';f.style.width=SW*s+'px';f.style.height=SH*s+'px';
+    bands.forEach(b=>b.style.opacity='1');return;
+  }
+  const a=fw/fh,plate=a>=1.45;
+  const minW=plate?PW:SW,minH=plate?PH:SH;
+  const cx=SW/2,cy=plate?PY+PH/2:SH/2;
+  const rw=Math.max(minW,minH*a),rh=Math.max(minH,minW/a);
+  const s=Math.max(.01,fw/rw),ox=cx-rw/2,oy=cy-rh/2;
+  sheet.style.transform='translate('+(-ox*s)+'px,'+(-oy*s)+'px) scale('+s+')';
+  f.style.width=fw+'px';f.style.height=fh+'px';
+  bands.forEach(b=>b.style.opacity=plate?'0':'1');
+  document.body.classList.toggle('portrait',!plate);
+}
+new ResizeObserver(fit).observe(document.querySelector('.wrap'));
+addEventListener('resize',fit);
+
+const buttons=scenes.map((s,i)=>{const b=document.createElement('button');b.textContent=s.dataset.name;
+  b.onclick=()=>{seek(starts[i]);setPlaying(false)};$('chapters').append(b);return b});
+function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function draw(){
+  let i=0;while(i<durations.length-1&&elapsed>=starts[i+1])i++;
+  if(i!==index){index=i;
+    scenes.forEach((s,n)=>{s.classList.toggle('live',n===i);s.inert=n!==i;s.setAttribute('aria-hidden',String(n!==i))});
+    document.body.dataset.scene=String(i);
+    buttons.forEach((b,n)=>b.setAttribute('aria-current',String(n===i)));
+    document.querySelectorAll('[data-bind=name]').forEach(el=>el.textContent=scenes[i].dataset.name);
+    document.querySelectorAll('[data-bind=index]').forEach(el=>el.textContent=String(i+1).padStart(2,'0'));
+  }
+  for(const c of cues)c.el.classList.toggle('on',elapsed>=c.at&&elapsed<c.out);
+  document.querySelectorAll('[data-bind=count]').forEach(el=>el.textContent=String(scenes.length).padStart(2,'0'));
+  if(typeof window.REEL_TICK==='function')window.REEL_TICK(elapsed,index,elapsed-starts[index],total,starts,durations);
+  syncFilm(false);
+  $('seek').value=String(elapsed);$('time').textContent=fmt(elapsed)+' / '+fmt(total);
+}
+const film=$('film');
+/* The footage runs on its own clock; the reel only nudges it back into step
+   when they drift or when someone seeks. Setting currentTime every frame
+   makes it stutter. */
+function syncFilm(force){
+  if(!film)return;
+  const t=elapsed/1000;
+  const over=t>=FILM_SECONDS;document.body.classList.toggle('film-over',over);
+  if(over){film.hidden=true;if(!film.paused)film.pause();return}
+  film.hidden=false;
+  if(force||Math.abs(film.currentTime-t)>0.34)film.currentTime=t;
+  if(film.playbackRate!==rate)film.playbackRate=rate;
+  if(playing&&film.paused)film.play().catch(()=>{});
+  if(!playing&&!film.paused)film.pause();
+}
+function seek(ms){elapsed=Math.max(0,Math.min(total,ms));draw();syncFilm(true)}
+function setPlaying(v){playing=Boolean(v)&&!reduce.matches;$('play').textContent=playing?'Pause':'Play';
+  document.body.classList.toggle('playing',playing);last=0;syncFilm(false)}
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!playing){last=now;return}
+  if(!last)last=now;
+  const dt=Math.min(now-last,100)*rate;last=now;
+  elapsed=Math.min(total,elapsed+dt);
+  if(elapsed>=total){if(document.body.classList.contains('bare')){elapsed=0;syncFilm(true)}else setPlaying(false)}
+  draw();
+}
+$('play').onclick=()=>{if(elapsed>=total)elapsed=0;setPlaying(!playing)};
+$('restart').onclick=()=>{seek(0);setPlaying(true)};
+$('seek').max=String(total);
+$('seek').oninput=e=>{seek(Number(e.target.value));setPlaying(false)};
+addEventListener('message',e=>{if(e.origin!==location.origin)return;const c=e.data&&e.data.reel;
+  if(c==='play')setPlaying(true);else if(c==='pause')setPlaying(false);
+  else if(c==='restart'){seek(0);setPlaying(true)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)setPlaying(false)});
+addEventListener('keydown',e=>{const t=e.target;if(t&&/^(BUTTON|INPUT|A)$/.test(t.tagName))return;
+  if(e.code==='Space'){e.preventDefault();setPlaying(!playing)}
+  if(e.key.toLowerCase()==='r'){seek(0);setPlaying(true)}});
+window.__reelInfo={total,durations,names:scenes.map(s=>s.dataset.name)};
+window.__seekReel=ms=>{seek(ms);setPlaying(false);return{scene:index,time:elapsed}};
+window.__reelState=()=>({time:elapsed,playing,scene:index});
+window.__setReelPlaying=v=>{if(v&&elapsed>=total)seek(0);setPlaying(v)};
+window.__restartReel=()=>{seek(0);setPlaying(true)};
+window.__setReelRate=r=>{rate=Math.max(.25,Math.min(3,Number(r)||1))};
+fit();draw();
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('ready')));
+setPlaying(!reduce.matches&&q.get('paused')!=='1'&&h.get('paused')!=='1');
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

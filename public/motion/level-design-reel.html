@@ -1,0 +1,268 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Level Design | Motion reel</title>
+<meta name="description" content="Two Unity scenes composed for play and for mood: a maze blockout and an atmospheric set.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=DM+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--studio);color:var(--t-ink);font-family:var(--t-font)}
+button{font:inherit;color:inherit;border:1px solid var(--t-rule);background:transparent;padding:9px 14px;cursor:pointer;border-radius:var(--t-radius,0)}
+button:hover{background:var(--t-ink);color:var(--t-bg)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--t-spot);outline-offset:3px}
+.studio{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--t-bg);color:var(--t-ink);border-bottom:1px solid var(--t-rule);font-size:14px}
+.wrap{height:calc(100dvh - 172px);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--studio)}
+.frame{position:relative;flex:none;overflow:hidden}
+.sheet{width:1200px;height:1200px;position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;background:var(--sheet)}
+.plate{position:absolute;left:0;top:262.5px;width:1200px;height:675px;overflow:hidden}
+.band{position:absolute;left:0;right:0;transition:opacity .3s}
+.band.top{top:0;height:262.5px}.band.bottom{bottom:0;height:262.5px}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+body.ready .scene{transition:opacity .45s ease,visibility .45s}
+.scene.live{opacity:1;visibility:visible}
+.film{position:absolute;object-fit:contain;display:block}
+.film[hidden]{display:none}
+.cue{opacity:0}
+body.ready .cue{transition:opacity .5s ease,transform .7s cubic-bezier(.16,1,.3,1),clip-path .8s cubic-bezier(.65,0,.35,1)}
+.cue.on{opacity:1}
+.cue.up{transform:translateY(18px)}.cue.up.on{transform:none}
+.cue.down{transform:translateY(-14px)}.cue.down.on{transform:none}
+.cue.left{transform:translateX(-24px)}.cue.left.on{transform:none}
+.cue.wipe{clip-path:inset(0 100% 0 0)}.cue.wipe.on{clip-path:inset(0 0 0 0)}
+.cue.drop{clip-path:inset(0 0 100% 0)}.cue.drop.on{clip-path:inset(0 0 0 0)}
+.pen{stroke-dasharray:1;stroke-dashoffset:1}
+body.ready .pen{transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1)}
+.draw.on .pen{stroke-dashoffset:0}
+.transport{height:116px;border-top:1px solid var(--t-rule);background:var(--t-bg);color:var(--t-ink);padding:14px 24px;display:flex;flex-direction:column;gap:11px}
+.transport-row{display:flex;align-items:center;gap:14px}
+.transport input{flex:1;accent-color:var(--t-spot);min-width:0}
+.time{font:12px var(--t-mono);min-width:92px;text-align:right}
+.chapters{display:flex;gap:8px;overflow-x:auto}
+.chapters button{font-size:12px;white-space:nowrap;padding:8px 12px}
+.chapters button[aria-current=true]{background:var(--t-ink);color:var(--t-bg)}
+.embed .studio,.embed .chapters{display:none}
+.embed .wrap{height:calc(100dvh - 60px)}
+.embed .transport{height:60px;padding:10px 14px}
+.bare .studio,.bare .transport{display:none}
+.bare .wrap{height:100dvh}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+:root{--studio:#DCD4C3;--sheet:#ECE6D8;--ink:#2E2B27;--dim:#6E675C;--red:#C8372D;
+--t-bg:#ECE6D8;--t-ink:#2E2B27;--t-rule:#C4BAA6;--t-spot:#C8372D;
+--t-font:'Bricolage Grotesque',system-ui,sans-serif;--t-mono:'DM Mono',ui-monospace,monospace;
+--hd:'Bricolage Grotesque',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace;--hand:'Kalam',cursive}
+.sheet{background-color:var(--sheet);
+  background-image:linear-gradient(rgba(46,43,39,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(46,43,39,.13) 1px,transparent 1px),
+  linear-gradient(rgba(46,43,39,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(46,43,39,.055) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;background-position:-1px 62px,-1px -1px,-1px 2px,-1px -1px}
+
+.kick{position:absolute;left:56px;top:30px;font:500 13px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.head{position:absolute;left:56px;top:52px;margin:0;font:600 42px/1.05 var(--hd);letter-spacing:-.02em;color:var(--ink)}
+.cap{position:absolute;left:56px;top:560px;width:864px;margin:0;font:400 19px/1.5 var(--hd);color:var(--dim)}
+
+.film{left:56px;top:136px;width:864px;height:392px;background:#1d1d1f}
+.fr{position:absolute;left:55px;top:135px;width:866px;height:394px;border:1.5px solid var(--ink);pointer-events:none}
+.reg{position:absolute;width:18px;height:18px}
+.reg::before,.reg::after{content:"";position:absolute;background:var(--ink)}
+.reg::before{left:8px;top:0;width:1.5px;height:18px}.reg::after{top:8px;left:0;height:1.5px;width:18px}
+.dim{position:absolute;font:500 11px var(--mono);letter-spacing:.08em;color:var(--dim)}
+.dim.h{left:56px;top:116px;width:864px;height:9px;border-left:1.5px solid var(--dim);border-right:1.5px solid var(--dim)}
+.dim.h::before{content:"";position:absolute;left:0;right:0;top:4px;border-top:1px solid var(--dim)}
+.dim.h span{position:absolute;left:50%;top:-5px;transform:translateX(-50%);background:var(--sheet);padding:0 10px}
+
+/* title block */
+.tb{position:absolute;left:948px;top:135px;width:198px;height:394px;border:1.5px solid var(--ink);display:grid;grid-template-rows:auto auto auto auto 1fr auto auto;background:var(--sheet)}
+.tb div{border-bottom:1px solid var(--ink);padding:8px 11px}
+.tb div:last-child{border-bottom:0}
+.tb small{display:block;font:500 9.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.tb b{display:block;margin-top:3px;font:600 15px/1.25 var(--hd);color:var(--ink)}
+.tb ul{margin:5px 0 0;padding:0;list-style:none;font:400 12.5px/1.6 var(--mono);color:var(--ink)}
+
+/* red pencil */
+.marks{position:absolute;left:56px;top:136px;width:864px;height:392px;overflow:visible;pointer-events:none}
+.marks path{fill:none;stroke:var(--red);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1.5px rgba(255,255,255,.5))}
+.note{position:absolute;font:700 21px/1.15 var(--hand);color:var(--red);background:var(--sheet);padding:3px 10px 1px;border:1.5px solid var(--red);max-width:300px}
+
+/* closing notes */
+.notes{position:absolute;left:56px;top:136px;width:864px;height:392px;background:var(--sheet);display:grid;align-content:center;gap:22px;padding:0 46px}
+.notes div{display:grid;grid-template-columns:52px 1fr;align-items:baseline;font:400 28px/1.25 var(--hand);color:var(--ink)}
+.notes b{font:700 34px var(--hand);color:var(--red)}
+
+/* bands */
+.band.top{display:flex;flex-direction:column;justify-content:center;padding-left:56px}
+.band.top small{font:500 14px var(--mono);letter-spacing:.2em;color:var(--red)}
+.band.top h1{margin:10px 0 0;font:700 78px/1 var(--hd);letter-spacing:-.035em;color:var(--ink)}
+.band.bottom{display:flex;align-items:center;justify-content:space-between;padding:0 56px}
+.scale{display:flex;flex-direction:column;gap:8px;font:500 11px var(--mono);color:var(--dim)}
+.scale i{display:block;width:300px;height:10px;border:1.5px solid var(--ink);background:linear-gradient(90deg,var(--ink) 0 25%,transparent 25% 50%,var(--ink) 50% 75%,transparent 75%)}
+.band.bottom p{margin:0;text-align:right;font:500 12px/1.8 var(--mono);letter-spacing:.12em;color:var(--dim)}
+</style></head><body>
+<header class="studio"><strong>Level Design</strong><span>Unity 2022.3 / scene views</span></header>
+<main class="wrap"><div class="frame"><div class="sheet" id="sheet">
+
+<div class="band top"><small>DRAWING SET &middot; TWO SCENES &middot; 2024</small><h1>Unity Level Design</h1></div>
+<div class="band bottom"><div class="scale"><i></i><span>0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15 UNITS</span></div>
+<p>DRAWN BY F. AMJAD<br>SECOND YEAR GAME DESIGN COURSEWORK</p></div>
+<div class="plate" id="plate"><video id="film" class="film" muted playsinline preload="auto" src="/projects/level-design/reel.mp4"></video>
+
+<div class="fr"></div><i class="reg" style="left:30px;top:110px"></i><i class="reg" style="left:928px;top:110px"></i><i class="reg" style="left:30px;top:536px"></i><i class="reg" style="left:928px;top:536px"></i>
+<div class="dim h"><span>1366 &times; 620 &middot; EDITOR CAPTURE</span></div>
+<aside class="tb">
+  <div><small>Project</small><b>Unity Level Design</b></div>
+  <div><small>Sheet</small><b><span data-bind="index">01</span> of <span data-bind="count">03</span></b></div>
+  <div><small>Scene</small><b data-bind="name">The maze</b></div>
+  <div><small>Engine</small><b>Unity 2022.3</b></div>
+  <div><small>Scripts</small><ul><li>PlayerMovement</li><li>EnemyMovement</li><li>GameManager</li><li>CameraFollow</li><li>Timer &middot; 60 s</li></ul></div>
+  <div><small>Drawn</small><b>F. Amjad</b></div>
+  <div><small>Year</small><b>2024</b></div>
+</aside>
+<svg class="marks" viewBox="0 0 1366 620" aria-hidden="true"><g class="draw" data-g="600" data-gout="6800"><path class="pen" pathLength="1" d="M975 525L917 538L849 544L787 554L719 559L650 562L579 562L516 550L454 542L380 538L333 521L277 507L258 484L214 466L184 446L188 423L163 400L174 377L221 358L249 338L273 317L310 297L377 286L439 276L501 265L571 263L640 259L710 257L781 261L845 271L907 281L964 294L1020 308L1059 327L1085 348L1135 367L1141 390L1148 413L1127 435L1136 460L1105 481L1047 497L1008 516L964 535L903 548L839 561L764 563L694 571L619 569L549 562L477 559L405 551"/></g><g class="draw" data-g="1900" data-gout="6800"><path class="pen" pathLength="1" d="M447 362L445 368L446 373L448 378L446 383L443 387L440 391L437 396L432 399L427 402L421 403L416 405L410 406L404 407L398 407L392 405L387 402L382 399L378 396L375 391L372 387L368 383L367 378L366 373L365 368L367 363L369 358L373 354L377 350L380 346L385 343L390 340L396 337L402 337L408 338L414 336L420 338L426 340L432 342L436 346L441 350L443 355L447 359L449 364L448 370L450 375L449 380L446 385L444 390L440 394L437 399L431 401"/></g><g class="draw" data-g="3400" data-gout="6800"><path class="pen" pathLength="1" d="M200 90L182 96L185 466L200 470"/></g><g class="draw" data-g="7300" data-gout="10000"><path class="pen" pathLength="1" d="M210 60L228 66L231 296L210 300"/></g><g class="draw" data-g="10800" data-gout="14500"><path class="pen" pathLength="1" d="M581 460L559 459L537 458L516 453L498 442L480 432L458 425L449 408L437 393L421 379L421 361L415 343L419 325L422 307L434 292L440 274L452 258L470 247L487 235L508 227L531 225L551 216L574 216L597 221L617 227L642 227L659 240L679 250L695 262L707 279L719 295L720 314L728 331L724 350L726 369L719 387L701 401L689 416L675 429L662 446L639 452L618 460L595 462L572 466L549 464L527 460L504 455L484 446L463 437L448 423L432 408L421 391"/></g><g class="draw" data-g="15000" data-gout="19000"><path class="pen" pathLength="1" d="M1182 303L1165 305L1148 303L1132 299L1115 296L1098 292L1085 283L1074 274L1068 262L1059 252L1057 241L1055 229L1056 217L1059 206L1059 193L1068 182L1078 172L1091 164L1108 159L1123 153L1139 147L1156 144L1174 142L1192 143L1208 150L1226 152L1242 158L1255 166L1265 176L1277 185L1282 197L1294 207L1297 219L1294 232L1290 244L1290 256L1279 267L1272 278L1259 287L1243 294L1227 300L1211 306L1193 308L1175 308L1157 308L1139 309L1124 301L1108 295L1090 290L1079 280L1067 271L1058 260"/></g><g class="draw" data-g="19500" data-gout="23000"><path class="pen" pathLength="1" d="M580 406L616 397L655 389L703 384L749 379L800 383L849 380L899 379L945 385L993 389L1023 401L1065 408L1091 419L1122 430L1141 442L1140 456L1149 469L1148 482L1152 497L1131 509L1095 519L1077 533L1031 539L997 549L948 553L902 556L856 564L806 561L757 559L703 560L657 554L621 544L572 538L546 526L515 515L504 501L474 489L473 475L467 461L477 447L506 435L527 422L559 412L593 402L633 394L673 386L718 379L770 380L820 374L870 377L920 380L972 382"/></g><g class="draw" data-g="23500" data-gout="27000"><path class="pen" pathLength="1" d="M218 70L200 76L203 466L218 470"/></g></svg>
+<div class="note cue up" data-g="1250" data-gout="6800" style="left:322px;top:266px">corridors and dead ends, blocked out first</div><div class="note cue up" data-g="2550" data-gout="6800" style="left:176px;top:490px">player start</div><div class="note cue up" data-g="4050" data-gout="6800" style="left:195px;top:174px">timber room: the camera always has a backdrop</div><div class="note cue up" data-g="7950" data-gout="10000" style="left:227px;top:231px">Player, Key, two Enemies, a GameManager</div><div class="note cue up" data-g="11450" data-gout="14500" style="left:537px;top:237px">panels angled to break sightlines</div><div class="note cue up" data-g="15650" data-gout="19000" style="left:499px;top:206px">four tree texture sets</div><div class="note cue up" data-g="20150" data-gout="23000" style="left:410px;top:225px">red key light on a dark ground</div><div class="note cue up" data-g="24150" data-gout="27000" style="left:214px;top:206px">tall trees hold the edges of the frame</div>
+<section class="scene" data-name="The maze" data-duration="10000">
+  <div class="kick cue" data-at="100">Sheet 01 / 03 &middot; The maze</div>
+  <h2 class="head cue up" data-at="200">A level, before it is a game.</h2>
+  <p class="cap cue up" data-at="600">Corridors and dead ends blocked out in box geometry, bounded by a timber room so the camera always has something behind the play space.</p>
+</section>
+<section class="scene" data-name="The set" data-duration="19000">
+  <div class="kick cue" data-at="100">Sheet 02 / 03 &middot; The set</div>
+  <h2 class="head cue up" data-at="200">A second scene, built for mood.</h2>
+  <p class="cap cue up" data-at="600">Red key light on a dark ground, tall tree meshes across four texture sets, and angled panels placed to break sightlines and catch the light.</p>
+</section>
+<section class="scene" data-name="Composition" data-duration="5600">
+  <div class="kick cue" data-at="100">Sheet 03 / 03 &middot; Composition</div>
+  <h2 class="head cue up" data-at="200">Decisions that live in the scene.</h2><div class="notes">
+  <div class="cue left" data-at="500"><b>1</b>where the key sits relative to the entrance</div>
+  <div class="cue left" data-at="1300"><b>2</b>how far the exit is from the longest dead end</div>
+  <div class="cue left" data-at="2100"><b>3</b>which way the panels face</div></div>
+  <p class="cap cue up" data-at="600">The scripts underneath stay small: movement, pursuit, two triggers and a sixty second clock.</p>
+</section>
+</div>
+</div></div></main>
+<nav class="transport">
+  <div class="transport-row">
+    <button id="play">Pause</button><button id="restart">Replay</button>
+    <input id="seek" type="range" min="0" max="100" step="100" value="0" aria-label="Seek reel">
+    <span class="time" id="time">0:00 / 0:00</span>
+  </div>
+  <div class="chapters" id="chapters"></div>
+</nav>
+<script></script>
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);
+const scenes=[...document.querySelectorAll('.scene')];
+const durations=scenes.map(s=>+s.dataset.duration);
+const starts=durations.map((d,i)=>durations.slice(0,i).reduce((a,b)=>a+b,0));
+const total=durations.reduce((a,b)=>a+b,0);
+const FILM_SECONDS=29;
+const q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.slice(1));
+if(q.get('embed')==='1')document.body.classList.add('embed');
+if(q.get('chrome')==='0')document.body.classList.add('embed','bare');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+let elapsed=0,index=-1,playing=false,last=0,rate=1;
+
+const cues=[...document.querySelectorAll('[data-at],[data-g]')].map(el=>{
+  const sc=el.closest('.scene'),si=sc?scenes.indexOf(sc):-1,g=el.hasAttribute('data-g');
+  const base=(g||si<0)?0:starts[si];
+  const at=base+Number(g?el.dataset.g:el.dataset.at);
+  const raw=g?el.dataset.gout:el.dataset.out;
+  const out=raw!=null?base+Number(raw):(!g&&si>=0?starts[si]+durations[si]:Infinity);
+  return {el,at,out};
+});
+
+/* The sheet is 1200 square with a 16:9 plate across its middle. A frame
+   wider than 1.45 shows the plate edge to edge; anything squarer shows the
+   whole sheet, bands included. Nothing in between, so a band is never cut
+   off halfway. */
+function fit(){
+  const wrap=document.querySelector('.wrap'),f=document.querySelector('.frame'),sheet=$('sheet');
+  const r=wrap.getBoundingClientRect(),fw=Math.max(1,r.width),fh=Math.max(1,r.height);
+  const SW=1200,SH=1200,PY=262.5,PW=1200,PH=675;
+  const bands=document.querySelectorAll('.band');
+  if(!document.body.classList.contains('embed')){
+    const s=Math.max(.01,Math.min((fw-16)/SW,(fh-16)/SH));
+    sheet.style.transform='scale('+s+')';f.style.width=SW*s+'px';f.style.height=SH*s+'px';
+    bands.forEach(b=>b.style.opacity='1');return;
+  }
+  const a=fw/fh,plate=a>=1.45;
+  const minW=plate?PW:SW,minH=plate?PH:SH;
+  const cx=SW/2,cy=plate?PY+PH/2:SH/2;
+  const rw=Math.max(minW,minH*a),rh=Math.max(minH,minW/a);
+  const s=Math.max(.01,fw/rw),ox=cx-rw/2,oy=cy-rh/2;
+  sheet.style.transform='translate('+(-ox*s)+'px,'+(-oy*s)+'px) scale('+s+')';
+  f.style.width=fw+'px';f.style.height=fh+'px';
+  bands.forEach(b=>b.style.opacity=plate?'0':'1');
+  document.body.classList.toggle('portrait',!plate);
+}
+new ResizeObserver(fit).observe(document.querySelector('.wrap'));
+addEventListener('resize',fit);
+
+const buttons=scenes.map((s,i)=>{const b=document.createElement('button');b.textContent=s.dataset.name;
+  b.onclick=()=>{seek(starts[i]);setPlaying(false)};$('chapters').append(b);return b});
+function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function draw(){
+  let i=0;while(i<durations.length-1&&elapsed>=starts[i+1])i++;
+  if(i!==index){index=i;
+    scenes.forEach((s,n)=>{s.classList.toggle('live',n===i);s.inert=n!==i;s.setAttribute('aria-hidden',String(n!==i))});
+    document.body.dataset.scene=String(i);
+    buttons.forEach((b,n)=>b.setAttribute('aria-current',String(n===i)));
+    document.querySelectorAll('[data-bind=name]').forEach(el=>el.textContent=scenes[i].dataset.name);
+    document.querySelectorAll('[data-bind=index]').forEach(el=>el.textContent=String(i+1).padStart(2,'0'));
+  }
+  for(const c of cues)c.el.classList.toggle('on',elapsed>=c.at&&elapsed<c.out);
+  document.querySelectorAll('[data-bind=count]').forEach(el=>el.textContent=String(scenes.length).padStart(2,'0'));
+  if(typeof window.REEL_TICK==='function')window.REEL_TICK(elapsed,index,elapsed-starts[index],total,starts,durations);
+  syncFilm(false);
+  $('seek').value=String(elapsed);$('time').textContent=fmt(elapsed)+' / '+fmt(total);
+}
+const film=$('film');
+/* The footage runs on its own clock; the reel only nudges it back into step
+   when they drift or when someone seeks. Setting currentTime every frame
+   makes it stutter. */
+function syncFilm(force){
+  if(!film)return;
+  const t=elapsed/1000;
+  const over=t>=FILM_SECONDS;document.body.classList.toggle('film-over',over);
+  if(over){film.hidden=true;if(!film.paused)film.pause();return}
+  film.hidden=false;
+  if(force||Math.abs(film.currentTime-t)>0.34)film.currentTime=t;
+  if(film.playbackRate!==rate)film.playbackRate=rate;
+  if(playing&&film.paused)film.play().catch(()=>{});
+  if(!playing&&!film.paused)film.pause();
+}
+function seek(ms){elapsed=Math.max(0,Math.min(total,ms));draw();syncFilm(true)}
+function setPlaying(v){playing=Boolean(v)&&!reduce.matches;$('play').textContent=playing?'Pause':'Play';
+  document.body.classList.toggle('playing',playing);last=0;syncFilm(false)}
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!playing){last=now;return}
+  if(!last)last=now;
+  const dt=Math.min(now-last,100)*rate;last=now;
+  elapsed=Math.min(total,elapsed+dt);
+  if(elapsed>=total){if(document.body.classList.contains('bare')){elapsed=0;syncFilm(true)}else setPlaying(false)}
+  draw();
+}
+$('play').onclick=()=>{if(elapsed>=total)elapsed=0;setPlaying(!playing)};
+$('restart').onclick=()=>{seek(0);setPlaying(true)};
+$('seek').max=String(total);
+$('seek').oninput=e=>{seek(Number(e.target.value));setPlaying(false)};
+addEventListener('message',e=>{if(e.origin!==location.origin)return;const c=e.data&&e.data.reel;
+  if(c==='play')setPlaying(true);else if(c==='pause')setPlaying(false);
+  else if(c==='restart'){seek(0);setPlaying(true)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)setPlaying(false)});
+addEventListener('keydown',e=>{const t=e.target;if(t&&/^(BUTTON|INPUT|A)$/.test(t.tagName))return;
+  if(e.code==='Space'){e.preventDefault();setPlaying(!playing)}
+  if(e.key.toLowerCase()==='r'){seek(0);setPlaying(true)}});
+window.__reelInfo={total,durations,names:scenes.map(s=>s.dataset.name)};
+window.__seekReel=ms=>{seek(ms);setPlaying(false);return{scene:index,time:elapsed}};
+window.__reelState=()=>({time:elapsed,playing,scene:index});
+window.__setReelPlaying=v=>{if(v&&elapsed>=total)seek(0);setPlaying(v)};
+window.__restartReel=()=>{seek(0);setPlaying(true)};
+window.__setReelRate=r=>{rate=Math.max(.25,Math.min(3,Number(r)||1))};
+fit();draw();
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('ready')));
+setPlaying(!reduce.matches&&q.get('paused')!=='1'&&h.get('paused')!=='1');
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
