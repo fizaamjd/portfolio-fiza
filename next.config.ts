@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
       // the character files are requested with ?v=N, so they can be cached forever
       { source: "/models/:path*", headers: [{ key: "Cache-Control", value: year }] },
       { source: "/motion/:path*", headers: [{ key: "Cache-Control", value: day }] },
+      // reel fonts are named by their content hash, so they never change
+      { source: "/motion/fonts/:path*", headers: [{ key: "Cache-Control", value: year }] },
       { source: "/projects/:path*", headers: [{ key: "Cache-Control", value: day }] },
       { source: "/off-the-clock/:path*", headers: [{ key: "Cache-Control", value: day }] },
     ];

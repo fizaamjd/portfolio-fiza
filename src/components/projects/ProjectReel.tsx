@@ -84,7 +84,7 @@ export default function ProjectReel({
       ([entry]) => {
         if (entry.isIntersecting) setMounted(true);
       },
-      { rootMargin: "200px", threshold: 0 },
+      { rootMargin: "1400px 0px", threshold: 0 }, // start well before it scrolls into view
     );
     observer.observe(el);
     return () => observer.disconnect();

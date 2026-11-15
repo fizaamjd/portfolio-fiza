@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PROFILE, PROJECTS, EDUCATION, SKILL_GROUPS, type Project } from "@/lib/data";
 import ProjectPanel from "@/components/projects/ProjectPanel";
 import ProjectPoster from "@/components/projects/ProjectPoster";
@@ -31,6 +31,21 @@ const WORK_COUNT = GROUPS.reduce((n, g) => n + g.ids.length, 0);
 function Arrow() { return <svg className="identity-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M5 5h10v10" /></svg>; }
 
 export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
+  // once the page is idle, quietly fetch every demo reel so it is already cached when you scroll to it
+  useEffect(() => {
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) return;
+      for (const href of new Set(PROJECTS.map((p) => p.reel).filter(Boolean) as string[])) {
+        const link = document.createElement("link");
+        link.rel = "prefetch"; link.href = `${href}?embed=1&chrome=0`; link.as = "document";
+        document.head.appendChild(link);
+      }
+    };
+    const start = () => { if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 6000 }); else setTimeout(run, 3000); };
+    const t = window.setTimeout(start, 3500); // after the character and its textures have had their turn
+    return () => { cancelled = true; window.clearTimeout(t); };
+  }, []);
   const [open, setOpen] = useState<Project | null>(null), [greeting, setGreeting] = useState(0), [ready, setReady] = useState<boolean | null>(null);
 
   return <div className="identity-site st">
