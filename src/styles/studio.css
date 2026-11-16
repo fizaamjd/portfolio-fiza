@@ -450,3 +450,12 @@
 .st-poster{position:absolute;top:0;left:50%;height:100%;width:auto;max-width:none;transform:translateX(-50%);pointer-events:none;z-index:2;transition:opacity .45s ease}
 .st-poster.is-gone{opacity:0}
 .st-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* first view is instant: the hero text, its highlight and her stage are fully drawn on the first frame */
+.st-hero-copy>*,.st-stage{opacity:1;transform:none;animation:none}
+.st-tag .st-mark{color:#fff;animation:none}
+.st-tag .st-mark::before{transform:none;animation:none}
+/* no scroll-in delays either: headings, their highlights and cards are simply there when you reach them */
+.st .st-h2,.st .career-title h2,.st-card,.st-group-card,.st-community article,.st-tool-groups>div,.st-contact{animation:none!important;opacity:1;transform:none}
+.st-h2 .st-mark{color:#fff;animation:none!important}
+.st-h2 .st-mark::before{transform:none;animation:none!important}
