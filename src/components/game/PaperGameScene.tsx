@@ -15,6 +15,8 @@ import { sfx } from "@/lib/game/audio";
  */
 type Props = {
   paused: boolean; reduced: boolean; unlocked: string[]; destination: number | null; travelKey: number;
+  /** A project is open on top of the world: stop drawing it, so the demo reel gets the main thread and GPU. */
+  frozen?: boolean;
   direction: MoveDirection | null; muted: boolean; mapView: boolean;
   onCollect: (id: string) => void; onOpen: (id: string) => void; onReady: (ok: boolean) => void; onTravel: (index: number) => void;
 };
@@ -417,7 +419,8 @@ export default function PaperGameScene(props: Props) {
     const goTo = (x: number, z: number) => { route = plan(position.x, position.z, x, z); target.copy(route.shift()!); movingTo = true; keys.clear(); };
     function draw(now: number) {
       frame = requestAnimationFrame(draw);
-      if (!visible) { last = now; return; }
+      // hidden, or covered by an open project: the canvas keeps its last frame, nothing is drawn
+      if (!visible || live.current.frozen) { last = now; return; }
       if (now - last < 1000 / 45) return;
       const dt = Math.min((now - last) / 1000, 0.06); last = now;
       const L = live.current, still = L.reduced;

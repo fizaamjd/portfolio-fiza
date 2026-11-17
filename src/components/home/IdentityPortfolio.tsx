@@ -70,7 +70,7 @@ export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
               {ready === false && <Image src={PROFILE.photo} width={600} height={800} alt="Fiza Amjad" className="identity-fallback-photo" />}
               {/* a still of her resting pose shows instantly, then fades as the live 3D version takes over */}
               {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized still that must line up exactly with the canvas */}
-              {ready !== false && <img className={`st-poster${ready ? " is-gone" : ""}`} src="/models/fiza-poster.webp?v=9" alt="" aria-hidden="true" fetchPriority="high" decoding="async" />}
+              {ready !== false && <img className={`st-poster${ready ? " is-gone" : ""}`} src="/models/fiza-poster.webp?v=10" alt="" aria-hidden="true" fetchPriority="high" decoding="async" />}
               {ready === null && <span className="identity-loading st-sr" role="status">Meeting little Fiza…</span>}
             </button>
             <p className="st-stage-cap">meet mini me. tap her and wander through my projects as a little game.</p>

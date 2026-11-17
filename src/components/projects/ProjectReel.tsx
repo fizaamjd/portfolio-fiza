@@ -22,6 +22,23 @@ export const THUMB_START: Record<string, number> = {
   pacman: 3400,
 };
 
+/* Where the full player opens, in reel milliseconds. Several reels begin with a
+   few seconds of logo ident on an otherwise empty stage, which reads as "still
+   loading" when someone has just opened a project. The player starts a beat
+   before the first real scene instead; Restart still plays the whole reel. */
+export const PLAYER_START: Record<string, number> = {
+  staffflow: 11000,
+  sentiment: 4200,
+  infinium: 5600,
+  knee: 1800,
+  zerotrust: 5400,
+  smartinbox: 5600,
+  cachenet: 6800,
+  postal: 5400,
+  planet1: 5000,
+  pacman: 2000,
+};
+
 /** Full-stage motion previews, with accessible transport outside the artwork. */
 export default function ProjectReel({
   project,
@@ -165,12 +182,13 @@ export default function ProjectReel({
           src={`${project.reel}?embed=1&chrome=0`}
           title={`${project.name} motion demo`}
           onLoad={() => {
-            // Start the thumbnail on useful product content, keeping the full player at its original opening.
-            const start = thumb ? THUMB_START[project.id] : undefined;
+            // Thumbnails open on a frame that shows the work; the player skips the opening ident.
+            const start = thumb ? THUMB_START[project.id] : PLAYER_START[project.id];
             if(start !== undefined){
               const win=frame.current?.contentWindow as DemoWindow|null;
-              win?.__seekReel?.(start);
-              ours.current=true;
+              win?.__seekReel?.(start); // every reel pauses when it seeks
+              if(thumb) ours.current=true;
+              else if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches) win?.__setReelPlaying?.(true);
             }
             setLoaded(true);
           }}
