@@ -5,6 +5,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { createFizaCharacter } from "@/lib/character/fiza-glb";
 import { markHeroReady } from "@/lib/hero-ready";
 import { createSilhouetteOutline } from "@/lib/character/silhouette-outline";
+import { isLightDevice } from "@/lib/device-tier";
 
 /* Little Fiza on the hero stage: she breathes, sways a little and turns
    gently toward the cursor. "Twirl" turns her once around. A butter glow with a
@@ -20,7 +21,9 @@ export default function FizaCharacter({ greeting, paused, onReady }: { greeting:
     let renderer: THREE.WebGLRenderer;
     try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" }); } catch { markHeroReady(); live.current.onReady(false); return; }
     // supersample: render at 2x even on 1x screens so edges and texture detail stay crisp
-    renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 2.5)); renderer.outputColorSpace = THREE.SRGBColorSpace;
+    // light devices (phones, in-app browsers) cannot afford the supersampling: it multiplies GPU memory
+    const light = isLightDevice();
+    renderer.setPixelRatio(light ? Math.min(devicePixelRatio, 1.5) : Math.min(Math.max(devicePixelRatio, 2), 2.5)); renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; el.prepend(renderer.domElement);
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(27, 1, .1, 80); camera.position.set(.1, 2.9, 12.6); camera.lookAt(0, 2.5, 0);
@@ -29,7 +32,7 @@ export default function FizaCharacter({ greeting, paused, onReady }: { greeting:
     const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = env; scene.environmentIntensity = 0.85;
     scene.add(new THREE.HemisphereLight(0xfffaf3, 0x8aa3b6, 0.6));
-    const key = new THREE.DirectionalLight(0xfff3e6, 1.9); key.position.set(-3.5, 7, 7); key.castShadow = true; key.shadow.mapSize.set(4096, 4096);
+    const key = new THREE.DirectionalLight(0xfff3e6, 1.9); key.position.set(-3.5, 7, 7); key.castShadow = true; key.shadow.mapSize.set(light ? 1024 : 4096, light ? 1024 : 4096);
     Object.assign(key.shadow.camera, { left: -9, right: 9, top: 9, bottom: -6, near: .1, far: 30 }); key.shadow.normalBias = .02; scene.add(key);
     const fill = new THREE.DirectionalLight(0xdfeaf3, .45); fill.position.set(5, 3, 5); scene.add(fill);
     const rim = new THREE.DirectionalLight(0xb9d6ec, 1.3); rim.position.set(3, 5, -5); scene.add(rim);

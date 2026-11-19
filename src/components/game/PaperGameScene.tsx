@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { createFizaCharacter } from "@/lib/character/fiza-glb";
+import { isLightDevice } from "@/lib/device-tier";
 import { DISTRICTS, GAME_PROJECTS, ISLAND_RADIUS, PAD_RING, PROJECT_PLACES, type MoveDirection } from "@/lib/game/world";
 import { sfx } from "@/lib/game/audio";
 
@@ -112,7 +113,8 @@ export default function PaperGameScene(props: Props) {
     const el = host.current; if (!el) return;
     let renderer: THREE.WebGLRenderer;
     try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" }); } catch { live.current.onReady(false); return; }
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75)); renderer.setClearColor(0xd5e3ed);
+    const light = isLightDevice(); // phones and in-app browsers: less GPU memory per frame
+    renderer.setPixelRatio(Math.min(devicePixelRatio, light ? 1.25 : 1.75)); renderer.setClearColor(0xd5e3ed);
     renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     el.appendChild(renderer.domElement);
@@ -122,7 +124,7 @@ export default function PaperGameScene(props: Props) {
     const look = new THREE.Vector3(0, 0, 2);
     scene.add(new THREE.HemisphereLight(0xfffaf0, 0x8fb0a0, 2.4));
     const sun = new THREE.DirectionalLight(0xfff1dc, 2.9); sun.position.set(-10, 22, 12); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 80 }); sun.shadow.normalBias = 0.04;
+    sun.shadow.mapSize.set(light ? 1024 : 2048, light ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 80 }); sun.shadow.normalBias = 0.04;
     scene.add(sun);
 
     const gs: THREE.BufferGeometry[] = [], ms: THREE.Material[] = [], texs: THREE.Texture[] = [];

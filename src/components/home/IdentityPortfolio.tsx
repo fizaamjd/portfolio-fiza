@@ -9,6 +9,7 @@ import ProjectPoster from "@/components/projects/ProjectPoster";
 import ExperienceSection from "@/components/home/ExperienceSection";
 import IntroReel from "@/components/home/IntroReel";
 import { whenHeroReady } from "@/lib/hero-ready";
+import { isLightDevice } from "@/lib/device-tier";
 import RecognitionSection from "@/components/home/RecognitionSection";
 import OffTheClock from "@/components/home/OffTheClock";
 
@@ -34,6 +35,8 @@ function Arrow() { return <svg className="identity-arrow" viewBox="0 0 20 20" ar
 export default function IdentityPortfolio({ onPlay }: { onPlay: () => void }) {
   // once the page is idle, quietly fetch every demo reel so it is already cached when you scroll to it
   useEffect(() => {
+    // phones and in-app browsers keep cards on their stills, so there is nothing to prefetch for them
+    if (isLightDevice()) return;
     let cancelled = false;
     const run = () => {
       if (cancelled) return;

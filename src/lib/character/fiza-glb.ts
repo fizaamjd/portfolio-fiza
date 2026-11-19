@@ -5,6 +5,7 @@ import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js
 import { createFizaModel } from "@/lib/character/fiza-model";
 import { createGlasses } from "@/lib/character/fiza-glasses";
 import { MASK_LAYER } from "@/lib/character/silhouette-outline";
+import { isLightDevice } from "@/lib/device-tier";
 
 /*
  * Little Fiza, rigged in Meshy (Mixamo skeleton) and exported with its walk
@@ -30,6 +31,9 @@ import { MASK_LAYER } from "@/lib/character/silhouette-outline";
 const V = "v=9";
 const URL = `/models/fiza-preview.glb?${V}`;
 const FULL = { colour: `/models/fiza-colour.webp?${V}`, normal: `/models/fiza-normal.webp?${V}`, mr: `/models/fiza-mr.webp?${V}` };
+/* Phones and in-app browsers get a 2K colour map (about 20 MB of GPU memory)
+   instead of the 8K one (about 350 MB), which crashes them. */
+const LIGHT_COLOUR = `/models/fiza-colour-2k.webp?${V}`;
 const HEIGHT = 5.4;
 const WALK_CLIP = "Walking_Woman";
 
@@ -60,8 +64,18 @@ function loadOnce() {
    and the game share the loaded material). Waits until the page is idle so
    the first paint is not competing with 12 MB of textures. */
 let upgraded: Promise<void> | null = null;
-function upgradeTextures(mat: THREE.MeshStandardMaterial, aniso: number) {
+function upgradeTextures(mat: THREE.MeshStandardMaterial, aniso: number, maxTexture: number) {
   if (upgraded) return upgraded;
+  if (isLightDevice() || maxTexture < 8192) {
+    // light path: only a sharper colour map; the preview's small normal and
+    // roughness maps are plenty at phone size
+    upgraded = new THREE.TextureLoader().loadAsync(LIGHT_COLOUR).then((t) => {
+      t.flipY = false; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(aniso, 4);
+      if (mat.map) { t.wrapS = mat.map.wrapS; t.wrapT = mat.map.wrapT; t.channel = mat.map.channel; }
+      const old = mat.map; mat.map = t; old?.dispose();
+    }).catch(() => { /* keep the preview colour map */ });
+    return upgraded;
+  }
   const idle = () => new Promise<void>((r) => ("requestIdleCallback" in window ? window.requestIdleCallback(() => r(), { timeout: 2500 }) : setTimeout(r, 1200)));
   const load = (url: string, like: THREE.Texture | null, srgb: boolean) => new THREE.TextureLoader().loadAsync(url).then((t) => {
     t.flipY = false; t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; t.anisotropy = aniso;
@@ -111,6 +125,7 @@ export function createFizaCharacter(renderer?: THREE.WebGLRenderer) {
   const owned: { dispose(): void }[] = [];
   let disposed = false;
   const aniso = renderer ? renderer.capabilities.getMaxAnisotropy() : 8;
+  const maxTexture = renderer ? renderer.capabilities.maxTextureSize : 4096;
 
   const ready = loadOnce().then((loaded) => {
     if (disposed) return false;
@@ -153,7 +168,7 @@ export function createFizaCharacter(renderer?: THREE.WebGLRenderer) {
         maskTex.generateMipmaps = false;
         maskTex.minFilter = THREE.LinearFilter;
         owned.push(maskTex);
-        void upgradeTextures(mat, aniso);
+        void upgradeTextures(mat, aniso, maxTexture);
         mat.onBeforeCompile = (shader) => {
           shader.uniforms.uBlink = blink;
           shader.uniforms.uBlinkMask = { value: maskTex };

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { whenHeroReady } from "@/lib/hero-ready";
+import { isLightDevice } from "@/lib/device-tier";
 import type { Project } from "@/lib/data";
 
 /* Where a card's thumbnail opens, in reel milliseconds. Most reels begin on a
@@ -100,7 +101,9 @@ export default function ProjectReel({
   // Prepare nearby thumbnails, but animate only previews actually in view.
   useEffect(() => {
     const el = shell.current;
-    if (!el || mounted || !heroUp) return;
+    // on phones and in-app browsers a card keeps its still: a live reel per card
+    // adds up to more memory than those browsers allow (opening a project still plays it)
+    if (!el || mounted || !heroUp || isLightDevice()) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setMounted(true);
